@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="nav-bar"></div>
+    <div id="auth-overlay" class="auth-overlay" style="display:none;">
+        <div class="auth-modal" id="login-modal">
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="text" id="login-username" placeholder="Username" required autocomplete="username">
+                <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+                <button type="submit">Login</button>
+            </form>
+            <button id="riot-login-btn" style="margin-top:12px;background:#e84057;color:#fff;padding:10px 24px;border-radius:8px;font-weight:bold;display:block;width:100%;border:none;cursor:pointer;font-size:1.08em;">Login with Riot</button>
+            <p>Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
+            <div class="auth-error" id="login-error"></div>
+        </div>
+        <div class="auth-modal" id="signup-modal" style="display:none;">
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <input type="text" id="signup-username" placeholder="Username" required autocomplete="username">
+                <input type="password" id="signup-password" placeholder="Password" required autocomplete="new-password">
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+            <div class="auth-error" id="signup-error"></div>
+        </div>
+    </div>
+    <div class="main-container" id="main-app">
+        <header class="header">
+            <h1 class="site-title">LoL Summoner Search</h1>
+        </header>
+        <section class="search-section">
+            <form class="search-form" onsubmit="event.preventDefault()" action="" method="get">
+                <div class="input-group">
+                    <input type="text" name="" class="textbox" placeholder="Summoner Name">
+                    <input type="text" name="" class="textbox2" placeholder="Tag (e.g. TR1)">
+                    <button class="button" type="submit">Search</button>
+                </div>
+            </form>
+        </section>
+        <section class="profile-section">
+            <div class="profile-card">
+                <div class="profile-avatar-container">
+                    <img class="profile-avatar" src="" alt="Profile Icon" style="display:none;" />
+                </div>
+                <div class="profile-info">
+                    <h2 class="name">-</h2>
+                    <p class="level">Level -</p>
+                    <p class="rank">Rank: <span class="rank-value">-</span></p>
+                </div>
+            </div>
+        </section>
+        <section class="matches-section">
+            <h2>Recent Matches</h2>
+            <div id="summonerContainer" class="matches-list"></div>
+        </section>
+    </div>
+    <script src="./script.js"></script>
+    <script>
+      // Insert nav bar
+      fetch('navbar.html').then(r=>r.text()).then(html=>{
+        document.getElementById('nav-bar').innerHTML=html;
+        if (typeof updateUIForAuth === 'function') updateUIForAuth();
+      });
+      // Riot login button logic
+      document.addEventListener('DOMContentLoaded', function() {
+        const riotBtn = document.getElementById('riot-login-btn');
+        if (riotBtn) {
+          riotBtn.onclick = function() {
+            window.location.href = 'http://localhost:3001/login';
+          };
+        }
+      });
+    </script>
+</body>
+</html>

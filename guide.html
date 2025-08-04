@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Champion Guides</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="nav-bar"></div>
+    <main style="max-width:700px;margin:40px auto 0 auto;padding:24px;background:#fafbfc;border-radius:16px;box-shadow:0 2px 8px #e3eaf3;">
+        <h2 style="margin-bottom:24px;">Create a Champion Guide</h2>
+        <form id="guide-form" style="margin-bottom:32px;">
+            <label for="champion-select">Champion:</label>
+            <select id="champion-select" required style="margin-bottom:12px;display:block;width:100%;padding:8px;border-radius:6px;border:1px solid #b0bec5;">
+                <option value="">Select a champion</option>
+                <option>Ahri</option>
+                <option>Akali</option>
+                <option>Ashe</option>
+                <option>Garen</option>
+                <option>Jinx</option>
+                <option>Lux</option>
+                <option>Yasuo</option>
+                <option>Zed</option>
+                <!-- Add more as needed -->
+            </select>
+            <label for="guide-title">Guide Title:</label>
+            <input id="guide-title" type="text" required maxlength="60" style="margin-bottom:12px;display:block;width:100%;padding:8px;border-radius:6px;border:1px solid #b0bec5;">
+            <label for="guide-content">Content:</label>
+            <textarea id="guide-content" required rows="8" maxlength="2000" style="margin-bottom:12px;display:block;width:100%;padding:8px;border-radius:6px;border:1px solid #b0bec5;"></textarea>
+            <button type="submit" style="background:#4fc3f7;color:#fff;padding:10px 24px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Publish Guide</button>
+            <div id="guide-form-msg" style="margin-top:10px;color:#e57373;"></div>
+        </form>
+        <h2 style="margin-bottom:16px;">Published Guides</h2>
+        <div id="published-guides"></div>
+    </main>
+    <script src="script.js"></script>
+    <script>
+      // Insert nav bar
+      fetch('navbar.html').then(r=>r.text()).then(html=>{
+        document.getElementById('nav-bar').innerHTML=html;
+        if (typeof updateUIForAuth === 'function') updateUIForAuth();
+      });
+    </script>
+</body>
+</html>

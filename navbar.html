@@ -1,0 +1,36 @@
+<nav class="main-navbar">
+  <div class="navbar-content" style="display:flex;align-items:center;justify-content:space-between;">
+    <a href="index.html" class="navbar-logo" style="display:flex;align-items:center;justify-content:flex-start;text-decoration:none;margin-right:24px;">
+      <img src="img/StatNexusLogo.png" alt="StatNexus Logo" style="height:200px;width:200px;display:block;" />
+    </a>
+    <button class="navbar-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="navbar-toggle-bar"></span>
+      <span class="navbar-toggle-bar"></span>
+      <span class="navbar-toggle-bar"></span>
+    </button>
+    <ul class="navbar-links">
+      <li><a href="index.html" class="navbar-link">Home</a></li>
+      <li><a href="guide.html" class="navbar-link">Champion Guides</a></li>
+    </ul>
+    <div id="user-bar" class="user-bar">
+      <span id="user-greeting"></span>
+      <button id="logout-btn" class="logout-btn">Logout</button>
+    </div>
+  </div>
+</nav>
+<script>
+// Hamburger menu toggle
+const toggle = document.querySelector('.navbar-toggle');
+const links = document.querySelector('.navbar-links');
+toggle.onclick = function() {
+  const expanded = toggle.getAttribute('aria-expanded') === 'true';
+  toggle.setAttribute('aria-expanded', !expanded);
+  links.classList.toggle('navbar-links-open');
+};
+window.addEventListener('resize', () => {
+  if(window.innerWidth > 800) {
+    document.querySelector('.navbar-links').classList.remove('navbar-links-open');
+    toggle.setAttribute('aria-expanded', false);
+  }
+});
+</script>
