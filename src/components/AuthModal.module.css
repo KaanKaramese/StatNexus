@@ -1,0 +1,69 @@
+.authOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(30, 34, 44, 0.92);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.authModal {
+  background: var(--surface-gunmetal);
+  border-radius: 14px;
+  box-shadow: 0 4px 32px rgba(79, 195, 247, 0.18);
+  padding: 32px 28px 24px 28px;
+  min-width: 320px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.authModalTitle {
+  color: var(--light-accent-orchid);
+  margin-bottom: 8px;
+}
+.authModalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.authModalInput {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--bg-charcoal);
+  color: var(--body);
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.authModalButton {
+  background: var(--primary-accent);
+  color: var(--heading);
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 0;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.authModalButton:hover {
+  background: var(--primary-accent-hover);
+}
+.authModalText {
+  color: var(--muted-text);
+  font-size: 0.98rem;
+}
+.authModalLink {
+  color: var(--light-accent-orchid);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.authError {
+  color: var(--error-crimson);
+  font-size: 0.98rem;
+  min-height: 18px;
+  margin-top: 2px;
+}

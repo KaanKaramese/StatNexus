@@ -1,0 +1,20 @@
+.mainGuidePage {
+  max-width: 700px;
+  margin: 40px auto 0 auto;
+  padding: 24px;
+  background: #fafbfc;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px #e3eaf3;
+}
+.guideSectionTitle {
+  margin-bottom: 24px;
+  font-size: 1.3rem;
+  color: var(--light-accent-orchid);
+  font-weight: 600;
+}
+.publishedSectionTitle {
+  margin-bottom: 16px;
+  font-size: 1.15rem;
+  color: var(--light-accent-orchid);
+  font-weight: 600;
+}

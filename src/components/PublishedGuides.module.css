@@ -1,0 +1,33 @@
+.publishedGuides {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.guideCard {
+  background: var(--surface-gunmetal);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--subtle-contrast);
+  padding: 18px 20px;
+  color: var(--body);
+  font-size: 1rem;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+}
+.guideCardTitle {
+  color: var(--light-accent-orchid);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.guideCardMeta {
+  color: var(--muted-text);
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+.guideCardContent {
+  color: var(--body);
+  font-size: 1rem;
+  margin-bottom: 0;
+}

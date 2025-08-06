@@ -1,0 +1,67 @@
+.landingContainer {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e3f7fd 0%, #fafbfc 100%);
+  padding: 0;
+}
+.landingTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-accent), #3398DB);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea {
+  border: 2.5px solid transparent;
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-image:
+    linear-gradient(135deg, #f7f7f7, #f7f7f7),
+    linear-gradient(135deg, var(--primary-accent), #3398DB);
+  color: #222;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1em;
+  font-family: inherit;
+  outline: none;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+input[type="text"]::placeholder,
+input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+textarea::placeholder {
+  color: #b0bec5;
+  opacity: 1;
+}
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  box-shadow: 0 0 0 2px #3398DB44;
+}
+.landingSubtitle {
+  font-size: 1.2rem;
+  color: var(--muted-text);
+  margin-bottom: 32px;
+}
+.searchSection {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.errorMsg {
+  color: #e57373;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 1.1em;
+}
