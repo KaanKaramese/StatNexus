@@ -1,3 +1,22 @@
+/* --- Responsive Enhancements --- */
+@media (max-width: 600px) {
+  .mainContainer {
+    width: 98vw;
+    padding: 12px 2vw 20px 2vw;
+  }
+  .header {
+    margin-bottom: 18px;
+  }
+  .siteTitle {
+    font-size: 1.2rem;
+  }
+  .profileSection {
+    margin-bottom: 18px;
+  }
+  .matchesSection {
+    margin-top: 12px;
+  }
+}
 .mainContainer {
   width: 80%;
   max-width: 1200px;

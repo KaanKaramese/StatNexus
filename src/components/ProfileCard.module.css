@@ -1,3 +1,23 @@
+/* --- Responsive Enhancements --- */
+@media (max-width: 600px) {
+  .profileCard {
+    flex-direction: column;
+    padding: 12px 6vw;
+    gap: 12px;
+    min-width: 0;
+    max-width: 98vw;
+  }
+  .profileAvatarContainer, .profileAvatar {
+    width: 56px;
+    height: 56px;
+  }
+  .profileName {
+    font-size: 1.1rem;
+  }
+  .profileLevel, .profileRank {
+    font-size: 0.98rem;
+  }
+}
 .profileCard {
   display: flex;
   align-items: center;

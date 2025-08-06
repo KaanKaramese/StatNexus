@@ -1,3 +1,23 @@
+/* --- Responsive Enhancements --- */
+@media (max-width: 600px) {
+  .publishedGuides {
+    gap: 10px;
+  }
+  .guideCard {
+    max-width: 98vw;
+    padding: 10px 4vw;
+    font-size: 0.97rem;
+  }
+  .guideCardTitle {
+    font-size: 1rem;
+  }
+  .guideCardMeta {
+    font-size: 0.92rem;
+  }
+  .guideCardContent {
+    font-size: 0.97rem;
+  }
+}
 .publishedGuides {
   margin-top: 24px;
   display: flex;

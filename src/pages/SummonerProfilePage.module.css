@@ -1,3 +1,20 @@
+/* --- Responsive Enhancements --- */
+@media (max-width: 600px) {
+  .profilePageContainer {
+    width: 98vw;
+    padding: 12px 2vw 20px 2vw;
+  }
+  .profileTitle {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  .matchesSection {
+    margin-top: 12px;
+  }
+  .errorMsg {
+    font-size: 0.98em;
+  }
+}
 .profilePageContainer {
   width: 80%;
   max-width: 1200px;

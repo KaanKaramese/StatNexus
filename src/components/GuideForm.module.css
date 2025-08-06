@@ -1,3 +1,22 @@
+/* --- Responsive Enhancements --- */
+@media (max-width: 600px) {
+  .guideForm {
+    padding: 12px 4vw;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .guideFormTitle {
+    font-size: 1rem;
+  }
+  .guideFormInput, .guideFormTextarea {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+  }
+  .guideFormButton {
+    font-size: 0.95rem;
+    padding: 8px 0;
+  }
+}
 .guideForm {
   display: flex;
   flex-direction: column;

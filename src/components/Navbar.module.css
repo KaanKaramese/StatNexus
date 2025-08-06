@@ -1,3 +1,28 @@
+/* --- Responsive Enhancements --- */
+@media (max-width: 800px) {
+  .navbarContent {
+    flex-direction: column;
+    height: auto;
+    padding: 0 8px;
+  }
+  .navbarLinks {
+    width: 100vw;
+    padding: 10px 0;
+    font-size: 0.98em;
+    gap: 6px;
+  }
+  .navbarLink {
+    padding: 10px 10vw;
+    font-size: 1em;
+  }
+  .userBar {
+    margin-left: 0;
+    width: 100vw;
+    justify-content: flex-start;
+    padding: 6px 4vw;
+    font-size: 1em;
+  }
+}
 .mainNavbar {
   background: var(--surface-gunmetal);
   border-bottom: 1px solid var(--subtle-contrast);
