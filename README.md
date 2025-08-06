@@ -1,12 +1,42 @@
-# React + Vite
+# StatNexus
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **StatNexus** is a modern web application for League of Legends players to search, analyze, and share summoner profiles and guides.
 
-Currently, two official plugins are available:
+## Goal
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+StatNexus aims to provide a comprehensive platform for League of Legends players to:
 
-## Expanding the ESLint configuration
+- Search for summoner profiles and match history
+- Share and discover gameplay guides
+- Connect with the community for better in-game performance
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Main Function
+
+The website allows users to:
+
+- Search for any summoner by name and tag
+- View detailed summoner profiles, including rank, level, and recent matches
+- Browse and publish gameplay guides
+- Log in with Riot or a custom account for personalized features
+
+## Features
+
+- **Summoner Search:** Instantly find any summoner’s profile and match history using Riot’s API.
+- **Profile Cards:** View player stats, ranks, and recent performance in a clean, visual format.
+- **Guide Publishing:** Create, publish, and browse community-contributed guides for champions and strategies.
+- **Authentication:** Secure login via Riot or custom accounts for saving favorites and publishing content.
+- **Responsive Design:** Fully responsive UI for desktop and mobile users.
+- **Modern Tech Stack:** Built with React, Vite, and modular CSS for fast, maintainable development.
+
+## Getting Started
+
+To run the project locally:
+
+```bash
+npm install
+npm run dev
+```
+
+## License
+
+This project is open source and available under the MIT License.
