@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment
+.env
+
+# Markdown files
+*.md
+
+# Scripts
+scripts/
+
+# GitHub workflows
+.github/workflows/
+
+# SQL files
+*.sql

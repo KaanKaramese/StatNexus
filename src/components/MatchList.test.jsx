@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 // @vitest-environment jsdom
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import MatchList from './MatchList';
 import React from 'react';
 import { describe, it, expect } from 'vitest';

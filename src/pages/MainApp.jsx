@@ -13,13 +13,26 @@ export default function MainApp() {
   const [puuID, setPuuID] = useState(null);
   const [error, setError] = useState('');
 
+  const trackSummonerSearch = async (gameName, tagLine, profileIconId, summonerLevel) => {
+    if (!gameName || !tagLine) return;
+    try {
+      await fetch('/api/summoners/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gameName, tagLine, profileIconId, summonerLevel })
+      });
+    } catch {
+      // ignore tracking errors
+    }
+  };
+
   const handleSearch = async (username, tagLine) => {
     setError('');
     setProfile(null);
     setPuuID(null);
     try {
-      // Step 1: Get PUUID from Riot ID
-      const response = await fetch(`https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${username}/${tagLine}?api_key=RGAPI-044798d1-59b2-40a2-ae1e-0dc82ee656d4`);
+      // Step 1: Get PUUID from Riot ID through the backend
+      const response = await fetch(`/api/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(username)}/${encodeURIComponent(tagLine)}`);
       if (!response.ok) {
         if (response.status === 404) setError('Summoner not found. Please check the name and tag.');
         else if (response.status === 403) setError('API key invalid or expired. Please update your API key.');
@@ -33,14 +46,14 @@ export default function MainApp() {
       }
       setPuuID(res.puuid);
       // Step 2: Get Summoner Info (level, icon, summonerId) from PUUID
-      const summonerRes = await fetch(`https://tr1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${res.puuid}?api_key=RGAPI-044798d1-59b2-40a2-ae1e-0dc82ee656d4`);
+      const summonerRes = await fetch(`/api/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}`);
       if (!summonerRes.ok) {
         setError('Failed to fetch summoner profile info.');
         return;
       }
       const summonerData = await summonerRes.json();
       // Step 3: Get Rank from PUUID
-      const rankRes = await fetch(`https://tr1.api.riotgames.com/lol/league/v4/entries/by-puuid/${res.puuid}?api_key=RGAPI-044798d1-59b2-40a2-ae1e-0dc82ee656d4`);
+      const rankRes = await fetch(`/api/riot/lol/league/v4/entries/by-puuid/${res.puuid}`);
       let rankText = '-';
       if (rankRes.ok) {
         const rankData = await rankRes.json();
@@ -53,10 +66,11 @@ export default function MainApp() {
       setProfile({
         name: res.gameName && res.tagLine ? `${res.gameName}#${res.tagLine}` : (summonerData.name || '-'),
         level: summonerData.summonerLevel,
-        icon: summonerData.profileIconId ? `http://ddragon.leagueoflegends.com/cdn/10.18.1/img/profileicon/${summonerData.profileIconId}.png` : '',
+        icon: summonerData.profileIconId != null ? `https://ddragon.leagueoflegends.com/cdn/16.9.1/img/profileicon/${summonerData.profileIconId}.png` : '',
         rank: rankText
       });
-    } catch (err) {
+      void trackSummonerSearch(res.gameName, res.tagLine, summonerData.profileIconId, summonerData.summonerLevel);
+    } catch {
       setError('Network error. Please check your connection.');
     }
   };

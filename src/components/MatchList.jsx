@@ -3,7 +3,37 @@
 import React, { useState } from 'react';
 import styles from './MatchList.module.css';
 
-const api_key = "RGAPI-044798d1-59b2-40a2-ae1e-0dc82ee656d4";
+const MATCH_REQUEST_SPACING_MS = 120;
+const RATE_LIMIT_RETRY_LIMIT = 3;
+const RATE_LIMIT_BACKOFF_BASE_MS = 500;
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const getRetryDelayMs = (response, attempt) => {
+  const retryAfter = response.headers.get('Retry-After');
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    if (!Number.isNaN(seconds)) return Math.max(0, seconds * 1000);
+  }
+  return RATE_LIMIT_BACKOFF_BASE_MS * Math.pow(2, attempt);
+};
+
+const fetchJsonWithRetry = async (url, { retries = RATE_LIMIT_RETRY_LIMIT } = {}) => {
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const response = await fetch(url);
+    if (response.ok) return response.json();
+    if (response.status === 429 && attempt < retries) {
+      const delayMs = getRetryDelayMs(response, attempt);
+      await sleep(delayMs);
+      continue;
+    }
+    const message = response.status === 429
+      ? 'Rate limit exceeded. Please try again shortly.'
+      : 'Request failed.';
+    throw new Error(message);
+  }
+  throw new Error('Request failed.');
+};
 
 const queueIdToMode = {
   400: 'Normal Draft', 420: 'Ranked Solo/Duo', 430: 'Normal Blind', 440: 'Ranked Flex', 450: 'ARAM',
@@ -67,6 +97,7 @@ export default function MatchList({ puuID }) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [warning, setWarning] = useState('');
   const [expanded, setExpanded] = useState({});
   // timeline state: { [idx]: { loading, error, events, duration } }
   const [timelines, setTimelines] = useState({});
@@ -75,27 +106,49 @@ export default function MatchList({ puuID }) {
     if (!puuID) return;
     setLoading(true);
     setError('');
-    fetch(`https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuID}/ids?start=0&count=10&api_key=${api_key}`)
-      .then(res => res.ok ? res.json() : Promise.reject('Failed to fetch match history.'))
-      .then(ids => {
+    setWarning('');
+
+    const loadMatches = async () => {
+      try {
+        const ids = await fetchJsonWithRetry(
+          `/api/riot/lol/match/v5/matches/by-puuid/${puuID}/ids?start=0&count=10`
+        );
         if (!Array.isArray(ids) || ids.length === 0) {
           setError('No matches found for this summoner.');
           setMatches([]);
           setLoading(false);
           return;
         }
-        Promise.all(ids.map(id =>
-          fetch(`https://europe.api.riotgames.com/lol/match/v5/matches/${id}?api_key=${api_key}`)
-            .then(r => r.ok ? r.json() : null)
-        )).then(matchData => {
-          setMatches(matchData.filter(Boolean));
-          setLoading(false);
-        });
-      })
-      .catch(e => {
-        setError(typeof e === 'string' ? e : 'Network error while fetching matches.');
+
+        const matchData = [];
+        let failedCount = 0;
+        for (const id of ids) {
+          try {
+            const match = await fetchJsonWithRetry(
+              `/api/riot/lol/match/v5/matches/${id}`
+            );
+            matchData.push(match);
+          } catch {
+            failedCount += 1;
+          }
+          await sleep(MATCH_REQUEST_SPACING_MS);
+        }
+
+        if (failedCount > 0 && matchData.length > 0) {
+          setWarning(`Some matches could not be loaded due to rate limits. Showing ${matchData.length} matches.`);
+        }
+        if (matchData.length === 0) {
+          setError('Failed to load matches. Please try again shortly.');
+        }
+        setMatches(matchData);
         setLoading(false);
-      });
+      } catch (e) {
+        setError(e?.message || 'Network error while fetching matches.');
+        setLoading(false);
+      }
+    };
+
+    loadMatches();
   }, [puuID]);
 
   if (loading) return <div>Loading matches...</div>;
@@ -104,6 +157,7 @@ export default function MatchList({ puuID }) {
 
   return (
     <div className={styles.matchesList}>
+      {warning && <div style={{ color: '#ffcc80', marginBottom: 8 }}>{warning}</div>}
       {matches.map((match, idx) => {
         const summary = getMatchSummary(match, puuID);
         if (!summary) return null;
@@ -120,8 +174,7 @@ export default function MatchList({ puuID }) {
             // If expanding and timeline not loaded, fetch it
             if (!exp[idx] && !timelines[idx]) {
               setTimelines(tl => ({ ...tl, [idx]: { loading: true, error: '', events: [], duration: 0 } }));
-              fetch(`https://europe.api.riotgames.com/lol/match/v5/matches/${summary.matchId}/timeline?api_key=${api_key}`)
-                .then(res => res.ok ? res.json() : Promise.reject('Timeline fetch failed'))
+              fetchJsonWithRetry(`/api/riot/lol/match/v5/matches/${summary.matchId}/timeline`)
                 .then(timelineData => {
                   // Parse events
                   const frames = timelineData.info && Array.isArray(timelineData.info.frames) ? timelineData.info.frames : [];
@@ -232,8 +285,6 @@ export default function MatchList({ puuID }) {
                   // Alternate above/below
                   const isUpper = i % 2 === 0;
                   const iconTop = isUpper ? -16 : 84;
-                  const connectorTop = isUpper ? 34 : 70;
-                  const connectorHeight = isUpper ? 16 : -16;
                   return (
                     <React.Fragment key={i}>
                       {/* Vertical connector */}
