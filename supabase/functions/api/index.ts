@@ -69,14 +69,15 @@ function levenshtein(a: string, b: string) {
   return matrix[bLen][aLen]
 }
 
-function getRiotBaseUrl(proxyPath: string) {
+function getRiotBaseUrl(proxyPath: string, region?: string) {
   if (
     proxyPath.startsWith('/riot/account/v1/') ||
     proxyPath.startsWith('/lol/match/v5/')
   ) {
     return 'https://europe.api.riotgames.com'
   }
-  return 'https://tr1.api.riotgames.com'
+  const shard = region || 'tr1'
+  return `https://${shard}.api.riotgames.com`
 }
 
 function stripRiotPrefix(path: string) {
@@ -233,7 +234,7 @@ async function handleSuggest(url: URL) {
     const { data, error } = await supabase
       .from('summoner_suggestions')
       .select(
-        'game_name,tag_line,profile_icon_id,summoner_level,game_name_norm,tag_line_norm,search_count,last_seen',
+        'game_name,tag_line,profile_icon_id,summoner_level,region,game_name_norm,tag_line_norm,search_count,last_seen',
       )
       .or(
         `game_name_norm.ilike.%${query}%,tag_line_norm.ilike.%${query}%`,
@@ -265,6 +266,7 @@ async function handleSuggest(url: URL) {
           tagLine: row.tag_line as string,
           profileIconId: row.profile_icon_id as number | null,
           summonerLevel: row.summoner_level as number | null,
+          region: row.region as string,
           score: nameMatch ? 0 : containsMatch ? 1 : 2,
           distance,
           searchCount: row.search_count as number,
@@ -281,11 +283,12 @@ async function handleSuggest(url: URL) {
     })
 
     const results = scored.slice(0, limit).map(
-      ({ gameName, tagLine, profileIconId, summonerLevel }) => ({
+      ({ gameName, tagLine, profileIconId, summonerLevel, region }) => ({
         gameName,
         tagLine,
         profileIconId,
         summonerLevel,
+        region,
       }),
     )
 
@@ -299,7 +302,7 @@ async function handleSuggest(url: URL) {
 async function handleTrack(req: Request) {
   try {
     const body = await req.json()
-    const { gameName, tagLine, profileIconId, summonerLevel } = body
+    const { gameName, tagLine, profileIconId, summonerLevel, region } = body
 
     if (typeof gameName !== 'string' || typeof tagLine !== 'string') {
       return errorResponse('Invalid payload')
@@ -318,6 +321,7 @@ async function handleTrack(req: Request) {
           typeof profileIconId === 'number' ? profileIconId : null,
         p_summoner_level:
           typeof summonerLevel === 'number' ? summonerLevel : null,
+        p_region: region || 'tr',
         p_game_name_norm: normalize(name),
         p_tag_line_norm: normalize(tag),
         p_now: Date.now(),
@@ -338,10 +342,18 @@ async function handleTrack(req: Request) {
 
 async function handleRiotProxy(req: Request, requestPath: string) {
   try {
+    const reqUrl = new URL(req.url)
     const riotPath = stripRiotPrefix(requestPath)
-    const baseUrl = getRiotBaseUrl(riotPath)
-    const separator = riotPath.includes('?') ? '&' : '?'
-    const url = `${baseUrl}${riotPath}${separator}api_key=${encodeURIComponent(RIOT_API_KEY)}`
+    const region = reqUrl.searchParams.get('region') || undefined
+    const baseUrl = getRiotBaseUrl(riotPath, region)
+    reqUrl.searchParams.delete('region')
+    const remainingParams = reqUrl.searchParams.toString()
+    let finalPath = riotPath
+    if (remainingParams) {
+      finalPath += '?' + remainingParams
+    }
+    const separator = finalPath.includes('?') ? '&' : '?'
+    const url = `${baseUrl}${finalPath}${separator}api_key=${encodeURIComponent(RIOT_API_KEY)}`
 
     const body =
       req.method === 'GET' || req.method === 'HEAD'
@@ -405,8 +417,19 @@ async function handleBackfillIcons() {
           continue
         }
 
+        let shard = 'tr1'
+        try {
+          const shardRes = await fetch(
+            `https://europe.api.riotgames.com/riot/account/v1/active-shards/by-game/lol/by-puuid/${account.puuid}?api_key=${RIOT_API_KEY}`,
+          )
+          if (shardRes.ok) {
+            const shardData = await shardRes.json()
+            if (shardData.activeShard) shard = shardData.activeShard
+          }
+        } catch {}
+
         const summonerRes = await fetch(
-          `https://tr1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${account.puuid}?api_key=${RIOT_API_KEY}`,
+          `https://${shard}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${account.puuid}?api_key=${RIOT_API_KEY}`,
         )
         if (!summonerRes.ok) {
           failed++

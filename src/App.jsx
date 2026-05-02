@@ -8,13 +8,13 @@ import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { apiFetch } from './api';
 
-async function trackSummonerSearch(gameName, tagLine, profileIconId, summonerLevel) {
+async function trackSummonerSearch(gameName, tagLine, profileIconId, summonerLevel, region) {
   if (!gameName || !tagLine) return;
   try {
     await apiFetch('/summoners/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ gameName, tagLine, profileIconId, summonerLevel })
+      body: JSON.stringify({ gameName, tagLine, profileIconId, summonerLevel, region })
     });
   } catch {
     // ignore tracking errors
@@ -81,13 +81,21 @@ function AppContent() {
         return;
       }
       setPuuID(res.puuid);
-      const summonerRes = await apiFetch(`/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}`);
+      let region = 'tr1';
+      try {
+        const shardRes = await apiFetch(`/riot/account/v1/active-shards/by-game/lol/by-puuid/${res.puuid}`);
+        if (shardRes.ok) {
+          const shardData = await shardRes.json();
+          if (shardData.activeShard) region = shardData.activeShard;
+        }
+      } catch {}
+      const summonerRes = await apiFetch(`/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}?region=${region}`);
       if (!summonerRes.ok) {
         setError('Failed to fetch summoner profile info.');
         return;
       }
       const summonerData = await summonerRes.json();
-      const rankRes = await apiFetch(`/riot/lol/league/v4/entries/by-puuid/${res.puuid}`);
+      const rankRes = await apiFetch(`/riot/lol/league/v4/entries/by-puuid/${res.puuid}?region=${region}`);
       let rankText = '-';
       if (rankRes.ok) {
         const rankData = await rankRes.json();
@@ -103,7 +111,7 @@ function AppContent() {
         icon: summonerData.profileIconId != null ? `https://ddragon.leagueoflegends.com/cdn/16.9.1/img/profileicon/${summonerData.profileIconId}.png` : '',
         rank: rankText
       });
-      void trackSummonerSearch(res.gameName, res.tagLine, summonerData.profileIconId, summonerData.summonerLevel);
+      void trackSummonerSearch(res.gameName, res.tagLine, summonerData.profileIconId, summonerData.summonerLevel, region);
       setPage('profile');
     } catch {
       setError('Network error. Please check your connection.');

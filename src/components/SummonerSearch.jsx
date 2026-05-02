@@ -155,10 +155,13 @@ export default function SummonerSearch({ onSearch }) {
                   ) : (
                     <div className={styles.suggestionIconPlaceholder}>?</div>
                   )}
-                  <div className={styles.suggestionText}>
+                    <div className={styles.suggestionText}>
                     <div className={styles.suggestionMeta}>
                       <span className={styles.suggestionName}>{getHighlightedText(suggestion.gameName, name)}</span>
                       <span className={styles.suggestionTag}>#{suggestion.tagLine}</span>
+                      {suggestion.region && (
+                        <span className={styles.suggestionRegion}>{suggestion.region.toUpperCase()}</span>
+                      )}
                     </div>
                     {suggestion.summonerLevel != null && (
                       <span className={styles.suggestionLevel}>Level {suggestion.summonerLevel}</span>
