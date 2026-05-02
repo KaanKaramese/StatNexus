@@ -1,54 +1,61 @@
-/* --- Responsive Enhancements --- */
-@media (max-width: 600px) {
-  .landingContainer {
-    padding: 0 2vw;
-  }
-  .landingTitle {
-    font-size: 1.5rem;
-    margin-bottom: 4px;
-  }
-  .landingSubtitle {
-    font-size: 1rem;
-    margin-bottom: 16px;
-  }
-  .searchSection {
-    max-width: 98vw;
-  }
-  .errorMsg {
-    font-size: 0.98em;
-  }
-}
+/* ===== Desktop ===== */
 .landingContainer {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #e3f7fd 0%, #fafbfc 100%);
-  padding: 0;
+  background: var(--bg-charcoal);
+  padding: clamp(16px, 4vw, 40px);
+  padding-top: clamp(80px, 12vw, 120px);
 }
+
 .landingTitle {
-  font-size: 2.5rem;
+  font-size: var(--text-h1);
   font-weight: 800;
   background: linear-gradient(135deg, var(--primary-accent), #3398DB);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
+  margin-bottom: clamp(8px, 1.5vw, 12px);
+  text-align: center;
+  line-height: 1.2;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="email"],
-textarea {
-  border: 2.5px solid transparent;
+.landingSubtitle {
+  font-size: var(--text-body);
+  color: var(--muted-text);
+  margin-bottom: clamp(24px, 4vw, 32px);
+  text-align: center;
+}
+
+.searchSection {
+  width: 100%;
+  max-width: min(480px, 90vw);
+  margin: 0 auto;
+}
+
+.errorMsg {
+  color: var(--error-crimson);
+  margin-top: 12px;
+  text-align: center;
+  font-size: var(--text-body);
+}
+
+/* Input styling (scoped to landing) */
+.landingContainer input[type="text"],
+.landingContainer input[type="password"],
+.landingContainer input[type="email"],
+.landingContainer textarea {
+  border: 2px solid transparent;
+  background-image:
+    linear-gradient(var(--surface-gunmetal), var(--surface-gunmetal)),
+    linear-gradient(135deg, var(--primary-accent), #3398DB);
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  background-image:
-    linear-gradient(135deg, #f7f7f7, #f7f7f7),
-    linear-gradient(135deg, var(--primary-accent), #3398DB);
-  color: #222;
+  color: var(--body);
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 1em;
@@ -56,32 +63,56 @@ textarea {
   outline: none;
   transition: box-shadow 0.2s, border 0.2s;
 }
-input[type="text"]::placeholder,
-input[type="password"]::placeholder,
-input[type="email"]::placeholder,
-textarea::placeholder {
-  color: #b0bec5;
+
+.landingContainer input::placeholder,
+.landingContainer textarea::placeholder {
+  color: var(--muted-text);
   opacity: 1;
 }
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus,
-textarea:focus {
-  box-shadow: 0 0 0 2px #3398DB44;
+
+.landingContainer input:focus,
+.landingContainer textarea:focus {
+  box-shadow: 0 0 0 2px rgba(51, 152, 219, 0.3);
 }
-.landingSubtitle {
-  font-size: 1.2rem;
-  color: var(--muted-text);
-  margin-bottom: 32px;
+
+/* ===== Tablet (≤1024px) ===== */
+@media (max-width: 1024px) {
+  .landingContainer {
+    padding-top: clamp(70px, 10vw, 100px);
+  }
+
+  .landingTitle {
+    max-width: 90vw;
+  }
 }
-.searchSection {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
+
+/* ===== Mobile (≤768px) ===== */
+@media (max-width: 768px) {
+  .landingContainer {
+    justify-content: flex-start;
+    padding-top: clamp(80px, 15vw, 100px);
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .searchSection {
+    max-width: 100%;
+  }
 }
-.errorMsg {
-  color: #e57373;
-  margin-top: 12px;
-  text-align: center;
-  font-size: 1.1em;
+
+/* ===== Small phones (≤480px) ===== */
+@media (max-width: 480px) {
+  .landingContainer {
+    padding: 12px;
+    padding-top: 80px;
+  }
+
+  .landingTitle {
+    font-size: clamp(1.4rem, 7vw, 1.8rem);
+  }
+
+  .landingSubtitle {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
 }

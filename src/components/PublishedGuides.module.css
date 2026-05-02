@@ -1,53 +1,86 @@
-/* --- Responsive Enhancements --- */
-@media (max-width: 600px) {
-  .publishedGuides {
-    gap: 10px;
-  }
-  .guideCard {
-    max-width: 98vw;
-    padding: 10px 4vw;
-    font-size: 0.97rem;
-  }
-  .guideCardTitle {
-    font-size: 1rem;
-  }
-  .guideCardMeta {
-    font-size: 0.92rem;
-  }
-  .guideCardContent {
-    font-size: 0.97rem;
-  }
-}
+/* ===== Desktop ===== */
 .publishedGuides {
   margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: clamp(14px, 2vw, 18px);
 }
+
 .guideCard {
   background: var(--surface-gunmetal);
   border-radius: 10px;
   box-shadow: 0 2px 8px var(--subtle-contrast);
-  padding: 18px 20px;
+  padding: clamp(14px, 2vw, 18px) clamp(16px, 2.5vw, 20px);
   color: var(--body);
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 1.5vw, 1rem);
   width: 100%;
-  max-width: 650px;
+  max-width: min(650px, 95vw);
   margin: 0 auto;
+  border: 1px solid var(--subtle-contrast);
 }
+
 .guideCardTitle {
   color: var(--light-accent-orchid);
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
   font-weight: 600;
   margin-bottom: 6px;
 }
+
 .guideCardMeta {
   color: var(--muted-text);
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
   margin-bottom: 8px;
 }
+
 .guideCardContent {
   color: var(--body);
-  font-size: 1rem;
-  margin-bottom: 0;
+  font-size: inherit;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* ===== Tablet (≤1024px) ===== */
+@media (max-width: 1024px) {
+  .guideCard {
+    max-width: min(650px, 90vw);
+  }
+}
+
+/* ===== Mobile (≤768px) ===== */
+@media (max-width: 768px) {
+  .publishedGuides {
+    gap: 12px;
+  }
+
+  .guideCard {
+    max-width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+  }
+}
+
+/* ===== Small phones (≤480px) ===== */
+@media (max-width: 480px) {
+  .publishedGuides {
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .guideCard {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  .guideCardTitle {
+    font-size: 1rem;
+  }
+
+  .guideCardMeta {
+    font-size: 0.85rem;
+  }
+
+  .guideCardContent {
+    font-size: 0.9rem;
+  }
 }

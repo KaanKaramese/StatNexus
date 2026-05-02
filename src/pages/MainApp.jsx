@@ -51,7 +51,9 @@ export default function MainApp() {
           const shardData = await shardRes.json();
           if (shardData.activeShard) region = shardData.activeShard;
         }
-      } catch {}
+      } catch {
+        // shard fetch is optional, proceed with default region
+      }
       // Step 2: Get Summoner Info (level, icon, summonerId) from PUUID
       const summonerRes = await apiFetch(`/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}?region=${region}`);
       if (!summonerRes.ok) {

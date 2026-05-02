@@ -1,47 +1,45 @@
-/* --- Responsive Enhancements --- */
-@media (max-width: 600px) {
-  .guideForm {
-    padding: 12px 4vw;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .guideFormTitle {
-    font-size: 1rem;
-  }
-  .guideFormInput, .guideFormTextarea {
-    font-size: 0.95rem;
-    padding: 8px 10px;
-  }
-  .guideFormButton {
-    font-size: 0.95rem;
-    padding: 8px 0;
-  }
-}
+/* ===== Desktop ===== */
 .guideForm {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: clamp(12px, 2vw, 16px);
   background: var(--surface-gunmetal);
   border-radius: 12px;
   box-shadow: 0 2px 8px var(--subtle-contrast);
-  padding: 24px 20px;
+  padding: clamp(16px, 3vw, 24px) clamp(16px, 2.5vw, 20px);
   margin-bottom: 24px;
+  border: 1px solid var(--subtle-contrast);
 }
+
 .guideFormTitle {
   color: var(--light-accent-orchid);
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
-.guideFormInput, .guideFormTextarea {
+
+.guideFormInput,
+.guideFormTextarea {
   padding: 10px 14px;
   border-radius: 8px;
   border: none;
   background: var(--bg-charcoal);
   color: var(--body);
-  font-size: 1rem;
-  margin-bottom: 8px;
+  font-size: var(--text-body);
+  margin-bottom: 4px;
+  font-family: inherit;
 }
+
+.guideFormTextarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.guideFormInput:focus,
+.guideFormTextarea:focus {
+  box-shadow: 0 0 0 2px var(--primary-accent);
+}
+
 .guideFormButton {
   background: var(--primary-accent);
   color: var(--heading);
@@ -49,10 +47,65 @@
   border: none;
   border-radius: 8px;
   padding: 10px 0;
-  font-size: 1rem;
+  font-size: var(--text-body);
   cursor: pointer;
   margin-top: 6px;
+  transition: background 0.2s;
 }
+
 .guideFormButton:hover {
   background: var(--primary-accent-hover);
+}
+
+/* ===== Tablet (≤1024px) ===== */
+@media (max-width: 1024px) {
+  .guideForm {
+    padding: 16px;
+  }
+}
+
+/* ===== Mobile (≤768px) ===== */
+@media (max-width: 768px) {
+  .guideForm {
+    padding: 14px;
+    gap: 10px;
+    border-radius: 10px;
+  }
+
+  .guideFormTitle {
+    margin-bottom: 0;
+  }
+
+  .guideFormTextarea {
+    min-height: 100px;
+  }
+}
+
+/* ===== Small phones (≤480px) ===== */
+@media (max-width: 480px) {
+  .guideForm {
+    padding: 12px 10px;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+
+  .guideFormTitle {
+    font-size: 1rem;
+  }
+
+  .guideFormInput,
+  .guideFormTextarea {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+  }
+
+  .guideFormButton {
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+
+  .guideFormTextarea {
+    min-height: 80px;
+  }
 }

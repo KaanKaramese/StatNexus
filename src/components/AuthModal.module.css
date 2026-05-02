@@ -1,34 +1,45 @@
+/* ===== Desktop ===== */
 .authOverlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
   background: rgba(30, 34, 44, 0.92);
   z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: overlayFadeIn 0.2s ease;
 }
+
 .authModal {
   background: var(--surface-gunmetal);
   border-radius: 14px;
   box-shadow: 0 4px 32px rgba(79, 195, 247, 0.18);
-  padding: 32px 28px 24px 28px;
-  min-width: 320px;
-  max-width: 90vw;
+  padding: clamp(24px, 3vw, 32px) clamp(20px, 3vw, 28px);
+  width: min(380px, 90vw);
+  max-height: 90vh;
+  max-height: 90dvh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  animation: modalScaleIn 0.2s ease;
 }
+
 .authModalTitle {
   color: var(--light-accent-orchid);
   margin-bottom: 8px;
+  font-size: var(--text-h3);
+  font-weight: 600;
 }
+
 .authModalForm {
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 100%;
 }
+
 .authModalInput {
   padding: 10px 14px;
   border-radius: 8px;
@@ -36,8 +47,8 @@
   background: var(--bg-charcoal);
   color: var(--body);
   font-size: 1rem;
-  margin-bottom: 4px;
 }
+
 .authModalButton {
   background: var(--primary-accent);
   color: var(--heading);
@@ -48,22 +59,88 @@
   font-size: 1rem;
   cursor: pointer;
   margin-top: 6px;
+  transition: background 0.2s;
 }
+
 .authModalButton:hover {
   background: var(--primary-accent-hover);
 }
+
 .authModalText {
   color: var(--muted-text);
   font-size: 0.98rem;
+  text-align: center;
 }
+
 .authModalLink {
   color: var(--light-accent-orchid);
   text-decoration: underline;
   cursor: pointer;
 }
+
 .authError {
   color: var(--error-crimson);
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   min-height: 18px;
-  margin-top: 2px;
+  text-align: center;
+}
+
+/* ===== Tablet (≤1024px) ===== */
+@media (max-width: 1024px) {
+  .authModal {
+    width: min(360px, 90vw);
+  }
+}
+
+/* ===== Mobile (≤768px) ===== */
+@media (max-width: 768px) {
+  .authModal {
+    width: min(340px, 92vw);
+    padding: 20px 16px;
+    border-radius: 12px;
+    max-height: 85vh;
+    max-height: 85dvh;
+  }
+}
+
+/* ===== Small phones (≤480px) ===== */
+@media (max-width: 480px) {
+  .authModal {
+    width: calc(100vw - 32px);
+    max-width: 100%;
+    padding: 18px 14px;
+    border-radius: 12px;
+    gap: 12px;
+  }
+
+  .authModalTitle {
+    font-size: 1.2rem;
+  }
+
+  .authModalInput {
+    font-size: 0.95rem;
+    padding: 8px 12px;
+  }
+
+  .authModalButton {
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+}
+
+/* ===== Animations ===== */
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }

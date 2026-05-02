@@ -1,19 +1,55 @@
-
-
 import React, { useRef, useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/StatNexusLogo.png';
 import styles from './Navbar.module.css';
 import AccountDropdown from './AccountDropdown';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function Navbar({ user, onLogout, onShowLogin, onNavigate, currentPage }) {
+export default function Navbar({ user, onLogout, onShowLogin }) {
   const { t } = useLanguage();
+  const location = useLocation();
+  const navigate = useNavigate();
   const homeRef = useRef(null);
   const guidesRef = useRef(null);
+  const navRef = useRef(null);
   const [underline, setUnderline] = useState({ left: 0, width: 0 });
-  const [hovered, setHovered] = useState(null); // 'home' | 'guides' | null
+  const [hovered, setHovered] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Helper to update underline position/width
+  const currentPage = location.pathname === '/' ? 'landing' : location.pathname.slice(1);
+
+  const handleNavigate = (target) => {
+    setMenuOpen(false);
+    navigate(target === 'landing' ? '/' : `/${target}`);
+  };
+
+  // Close menu on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    if (menuOpen) {
+      document.addEventListener('mousedown', handler);
+      document.body.classList.add('menu-open');
+    }
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.body.classList.remove('menu-open');
+    };
+  }, [menuOpen]);
+
+  // Close menu on escape
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    if (menuOpen) document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [menuOpen]);
+
+  // Update underline position
   const updateUnderline = (target) => {
     if (target) {
       const rect = target.getBoundingClientRect();
@@ -22,15 +58,13 @@ export default function Navbar({ user, onLogout, onShowLogin, onNavigate, curren
     }
   };
 
-  // On mount and when currentPage/hovered changes, update underline
   useEffect(() => {
     if (hovered === 'home') {
       updateUnderline(homeRef.current);
     } else if (hovered === 'guides') {
       updateUnderline(guidesRef.current);
     } else {
-      // Default to active
-      if (currentPage === 'landing' || currentPage === 'main') {
+      if (currentPage === 'landing') {
         updateUnderline(homeRef.current);
       } else if (currentPage === 'guides') {
         updateUnderline(guidesRef.current);
@@ -39,67 +73,69 @@ export default function Navbar({ user, onLogout, onShowLogin, onNavigate, curren
   }, [currentPage, hovered]);
 
   return (
-    <nav className={styles.mainNavbar}>
-      <div className={styles.navbarContent} style={{position:'relative'}}>
-        <div className={styles.leftGroup}>
-          <button
-            className={styles.navbarLogo}
-            style={{display:'flex',alignItems:'center',justifyContent:'flex-start',textDecoration:'none',marginRight:24,background:'none',border:'none',padding:0,cursor:'pointer'}}
-            onClick={() => onNavigate('landing')}
-          >
-            <img src={logo} alt="StatNexus Logo" style={{height:200,width:200,display:'block'}} />
-          </button>
-          <ul className={styles.navbarLinks} style={{position:'relative'}}>
-            <li>
-              <button
-                ref={homeRef}
-                className={currentPage === 'landing' || currentPage === 'main' ? `${styles.navbarLink} ${styles.navbarLinkActive}` : styles.navbarLink}
-                style={{background:'none',border:'none',padding:0,cursor:'pointer'}}
-                onClick={()=>onNavigate('landing')}
-                onMouseEnter={()=>setHovered('home')}
-                onMouseLeave={()=>setHovered(null)}
-                onFocus={()=>setHovered('home')}
-                onBlur={()=>setHovered(null)}
-              >
+    <nav className={styles.mainNavbar} ref={navRef}>
+      <div className={styles.navbarContent}>
+        <button
+          className={styles.navbarLogo}
+          onClick={() => handleNavigate('landing')}
+          aria-label="StatNexus Home"
+        >
+          <img src={logo} alt="StatNexus Logo" className={styles.logoImg} />
+        </button>
+
+        <ul className={`${styles.navbarLinks} ${menuOpen ? styles.navbarLinksOpen : ''}`}>
+          <li>
+            <button
+              ref={homeRef}
+              className={currentPage === 'landing' ? `${styles.navbarLink} ${styles.navbarLinkActive}` : styles.navbarLink}
+              onClick={() => handleNavigate('landing')}
+              onMouseEnter={() => setHovered('home')}
+              onMouseLeave={() => setHovered(null)}
+              onFocus={() => setHovered('home')}
+              onBlur={() => setHovered(null)}
+            >
               {t('home')}
-              </button>
-            </li>
-            <li>
-              <button
-                ref={guidesRef}
-                className={currentPage === 'guides' ? `${styles.navbarLink} ${styles.navbarLinkActive}` : styles.navbarLink}
-                style={{background:'none',border:'none',padding:0,cursor:'pointer'}}
-                onClick={()=>onNavigate('guides')}
-                onMouseEnter={()=>setHovered('guides')}
-                onMouseLeave={()=>setHovered(null)}
-                onFocus={()=>setHovered('guides')}
-                onBlur={()=>setHovered(null)}
-              >
+            </button>
+          </li>
+          <li>
+            <button
+              ref={guidesRef}
+              className={currentPage === 'guides' ? `${styles.navbarLink} ${styles.navbarLinkActive}` : styles.navbarLink}
+              onClick={() => handleNavigate('guides')}
+              onMouseEnter={() => setHovered('guides')}
+              onMouseLeave={() => setHovered(null)}
+              onFocus={() => setHovered('guides')}
+              onBlur={() => setHovered(null)}
+            >
               {t('guides')}
-              </button>
-            </li>
-            {/* Underline element */}
-            <div
-              className={styles.navbarUnderline}
-              style={{
-                left: underline.left,
-                width: underline.width,
-                height: 4,
-                position: 'absolute',
-                bottom: -6,
-                background: 'var(--primary-accent)',
-                borderRadius: '2px 2px 0 0',
-                transition: 'left 0.25s cubic-bezier(.4,0,.2,1), width 0.25s cubic-bezier(.4,0,.2,1)',
-                pointerEvents: 'none',
-                zIndex: 2
-              }}
-            />
-          </ul>
-        </div>
-        <div id="user-bar" className={styles.userBar} style={{background:'none',boxShadow:'none',padding:0,marginLeft:'auto'}}>
-          <AccountDropdown user={user} onLogout={onLogout} onShowLogin={onShowLogin} />
+            </button>
+          </li>
+          <div
+            className={styles.navbarUnderline}
+            style={{
+              left: underline.left,
+              width: underline.width,
+            }}
+          />
+        </ul>
+
+        <div className={styles.rightGroup}>
+          <div className={styles.userBar}>
+            <AccountDropdown user={user} onLogout={onLogout} onShowLogin={onShowLogin} />
+          </div>
+          <button
+            className={styles.navbarToggle}
+            onClick={() => setMenuOpen(v => !v)}
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          >
+            <span className={`${styles.navbarToggleBar} ${menuOpen ? styles.barTop : ''}`} />
+            <span className={`${styles.navbarToggleBar} ${menuOpen ? styles.barMid : ''}`} />
+            <span className={`${styles.navbarToggleBar} ${menuOpen ? styles.barBot : ''}`} />
+          </button>
         </div>
       </div>
+      {menuOpen && <div className={styles.navbarOverlay} onClick={() => setMenuOpen(false)} />}
     </nav>
   );
 }

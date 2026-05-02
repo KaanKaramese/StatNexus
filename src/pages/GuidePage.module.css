@@ -1,20 +1,53 @@
+/* ===== Desktop ===== */
 .mainGuidePage {
-  max-width: 700px;
-  margin: 40px auto 0 auto;
-  padding: 24px;
-  background: #fafbfc;
+  max-width: min(95vw, 700px);
+  margin: clamp(32px, 5vw, 40px) auto 0 auto;
+  padding: clamp(16px, 3vw, 24px);
+  background: var(--surface-gunmetal);
   border-radius: 16px;
-  box-shadow: 0 2px 8px #e3eaf3;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
 }
+
 .guideSectionTitle {
-  margin-bottom: 24px;
-  font-size: 1.3rem;
+  margin-bottom: clamp(16px, 3vw, 24px);
+  font-size: var(--text-h3);
   color: var(--light-accent-orchid);
   font-weight: 600;
 }
+
 .publishedSectionTitle {
-  margin-bottom: 16px;
-  font-size: 1.15rem;
+  margin-bottom: clamp(12px, 2vw, 16px);
+  margin-top: clamp(20px, 3vw, 32px);
+  font-size: var(--text-h3);
   color: var(--light-accent-orchid);
   font-weight: 600;
+}
+
+/* ===== Tablet (≤1024px) ===== */
+@media (max-width: 1024px) {
+  .mainGuidePage {
+    max-width: 90vw;
+  }
+}
+
+/* ===== Mobile (≤768px) ===== */
+@media (max-width: 768px) {
+  .mainGuidePage {
+    max-width: 100vw;
+    margin-top: 0;
+    border-radius: 0;
+    padding: 16px 12px;
+  }
+}
+
+/* ===== Small phones (≤480px) ===== */
+@media (max-width: 480px) {
+  .mainGuidePage {
+    padding: 12px 8px;
+  }
+
+  .guideSectionTitle,
+  .publishedSectionTitle {
+    font-size: 1.15rem;
+  }
 }

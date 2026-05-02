@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import AuthModal from './components/AuthModal';
 import GuidePage from './pages/GuidePage';
@@ -24,10 +25,10 @@ async function trackSummonerSearch(gameName, tagLine, profileIconId, summonerLev
 function AppContent() {
   const { user, isLoading, logout, handleCallback } = useAuth();
   const [authModal, setAuthModal] = useState({ show: false, error: '' });
-  const [page, setPage] = useState('landing');
   const [profile, setProfile] = useState(null);
   const [puuID, setPuuID] = useState(null);
   const [summonerError, setSummonerError] = useState('');
+  const navigate = useNavigate();
 
   // Handle OAuth callback from Riot redirect
   useEffect(() => {
@@ -55,13 +56,11 @@ function AppContent() {
 
   const handleLogout = () => {
     logout();
-    setPage('landing');
     setProfile(null);
     setPuuID(null);
     setSummonerError('');
+    navigate('/');
   };
-
-  const handleNavigate = (targetPage) => setPage(targetPage);
 
   const handleSummonerSearch = async (username, tagLine, setError) => {
     setSummonerError('');
@@ -88,7 +87,9 @@ function AppContent() {
           const shardData = await shardRes.json();
           if (shardData.activeShard) region = shardData.activeShard;
         }
-      } catch {}
+      } catch {
+        // shard fetch is optional, proceed with default region
+      }
       const summonerRes = await apiFetch(`/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}?region=${region}`);
       if (!summonerRes.ok) {
         setError('Failed to fetch summoner profile info.');
@@ -105,14 +106,15 @@ function AppContent() {
           rankText = `${entry.tier} ${entry.rank} (${entry.leaguePoints} LP)`;
         }
       }
-      setProfile({
+      const profileData = {
         name: res.gameName && res.tagLine ? `${res.gameName}#${res.tagLine}` : (summonerData.name || '-'),
         level: summonerData.summonerLevel,
         icon: summonerData.profileIconId != null ? `https://ddragon.leagueoflegends.com/cdn/16.9.1/img/profileicon/${summonerData.profileIconId}.png` : '',
         rank: rankText
-      });
+      };
+      setProfile(profileData);
       void trackSummonerSearch(res.gameName, res.tagLine, summonerData.profileIconId, summonerData.summonerLevel, region);
-      setPage('profile');
+      navigate('/profile');
     } catch {
       setError('Network error. Please check your connection.');
     }
@@ -132,15 +134,21 @@ function AppContent() {
 
   return (
     <LanguageProvider>
-      <Navbar user={displayName} onLogout={handleLogout} onShowLogin={handleShowLogin} onNavigate={handleNavigate} currentPage={page} />
+      <Navbar
+        user={displayName}
+        onLogout={handleLogout}
+        onShowLogin={handleShowLogin}
+      />
       <AuthModal
         show={authModal.show}
         onClose={handleCloseAuth}
         error={authModal.error}
       />
-      {page === 'landing' && <LandingPage onSearch={handleSummonerSearch} />}
-      {page === 'profile' && <SummonerProfilePage profile={profile} puuID={puuID} error={summonerError} />}
-      {page === 'guides' && <GuidePage />}
+      <Routes>
+        <Route path="/" element={<LandingPage onSearch={handleSummonerSearch} />} />
+        <Route path="/profile" element={<SummonerProfilePage profile={profile} puuID={puuID} error={summonerError} />} />
+        <Route path="/guides" element={<GuidePage />} />
+      </Routes>
     </LanguageProvider>
   );
 }

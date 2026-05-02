@@ -1,61 +1,131 @@
-/* --- Responsive Enhancements --- */
-@media (max-width: 1024px) {
-  .matchesList {
-    max-width: 98vw;
-    gap: 1.1rem;
-  }
-  .matchCard {
-    max-width: 97vw;
-    padding: 1rem 1vw;
-    font-size: 0.98rem;
-  }
-  .championIcon {
-    width: 32px;
-    height: 32px;
-    margin-right: 7px;
-  }
-  .scoreRow {
-    font-size: 1.2rem;
-  }
+/* ===== Desktop ===== */
+.matchesList {
+  width: 100%;
+  max-width: min(650px, 90vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 2vw, 18px);
+  margin: 0 auto;
 }
 
-@media (max-width: 768px) {
-  .matchesList {
-    max-width: 100vw;
-    gap: 0.7rem;
-    padding: 0 2vw;
-  }
-  .matchCard {
-    max-width: 100vw;
-    padding: 0.7rem 0.5vw;
-    font-size: 0.95rem;
-    border-radius: 7px;
-  }
-  .championIcon {
-    width: 24px;
-    height: 24px;
-    margin-right: 5px;
-  }
-  .scoreRow {
-    font-size: 1rem;
-  }
-  .winLossLabel {
-    font-size: 1rem;
-    margin-bottom: 4px;
-    margin-left: 0;
-    top: -2px;
-  }
-  .matchStats {
-    font-size: 0.9rem;
-  }
+.matchCard {
+  background: var(--surface-gunmetal);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--subtle-contrast);
+  padding: clamp(10px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  color: var(--body);
+  font-size: clamp(0.95rem, 1.5vw, 1rem);
+  width: 100%;
+  max-width: min(600px, 90vw);
+  margin: 0 auto;
+  overflow: visible;
+  position: relative;
 }
+
+.matchDetails {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  padding-top: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.matchDetails table {
+  width: 100%;
+  min-width: 320px;
+  table-layout: auto;
+}
+
+.matchDetails td,
+.matchDetails th {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 120px;
+}
+
+.championIcon {
+  width: clamp(32px, 5vw, 40px);
+  height: clamp(32px, 5vw, 40px);
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 1.5px solid var(--primary-accent);
+  flex-shrink: 0;
+}
+
+.matchInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.winLossLabel {
+  text-align: left;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.win {
+  color: #4fc3f7;
+}
+
+.loss {
+  color: #e57373;
+}
+
+.scoreRow {
+  display: flex;
+  align-items: baseline;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.scoreKills,
+.scoreAssists {
+  color: #fff;
+  font-weight: 600;
+}
+
+.scoreDeaths {
+  color: #E84057;
+  font-weight: 600;
+  margin: 0 4px;
+}
+
+.kdaRatio {
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  color: #b0bec5;
+  font-weight: 500;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.matchStats {
+  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
+  color: var(--muted-text);
+}
+
+/* Expand button */
 .expandBtn {
   position: absolute;
   right: 0;
   top: 0;
   width: 44px;
-  height: 72px;
-  background: #4fc3f7;
+  height: 100%;
+  background: var(--primary-accent);
   border: none;
   border-radius: 0 10px 10px 0;
   display: flex;
@@ -64,110 +134,121 @@
   color: #fff;
   font-size: 1.6rem;
   cursor: pointer;
-  box-shadow: 0 2px 8px #e3eaf3;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s;
   z-index: 3;
   padding: 0;
 }
+
 .expandBtn[aria-expanded="true"] {
   background: #3398DB;
 }
+
 .expandIcon {
   display: inline-block;
-  transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+  transition: transform 0.25s cubic-bezier(.4, 0, .2, 1);
 }
+
 .expandBtn[aria-expanded="true"] .expandIcon {
   transform: rotate(180deg);
 }
-.matchesList {
-  width: 100%;
-  max-width: 650px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  margin: 0 auto;
+
+/* ===== Tablet (≤1024px) ===== */
+@media (max-width: 1024px) {
+  .matchesList {
+    max-width: 96vw;
+    gap: 14px;
+  }
+
+  .matchCard {
+    max-width: 95vw;
+  }
 }
-.matchCard {
-  background: var(--surface-gunmetal);
-  border-radius: 10px;
-  box-shadow: 0 2px 8px var(--subtle-contrast);
-  padding: 14px 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0;
-  color: var(--body);
-  font-size: 1rem;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  overflow: visible;
+
+/* ===== Mobile (≤768px) ===== */
+@media (max-width: 768px) {
+  .matchesList {
+    max-width: 100vw;
+    gap: 10px;
+    padding: 0 8px;
+  }
+
+  .matchCard {
+    max-width: 100%;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+
+  .championIcon {
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+  }
+
+  .scoreRow {
+    font-size: 1.1rem;
+  }
+
+  .winLossLabel {
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+
+  .matchStats {
+    font-size: 0.85rem;
+  }
+
+  .matchDetails table {
+    min-width: 260px;
+  }
+
+  .matchDetails td,
+  .matchDetails th {
+    max-width: 80px;
+    font-size: 0.85rem;
+  }
+
+  .expandBtn {
+    width: 36px;
+    font-size: 1.3rem;
+    border-radius: 0 8px 8px 0;
+  }
 }
-.matchDetails {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  box-sizing: border-box;
-  margin-top: 0;
-  padding-top: 12px;
-}
-.championIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-  margin-right: 10px;
-  border: 1.5px solid var(--primary-accent);
-}
-.matchInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.winLossLabel {
-  text-align: left;
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-  margin-left: 2px;
-  letter-spacing: 0.5px;
-  position: relative;
-  top: -6px;
-}
-.win {
-  color: #4fc3f7;
-}
-.loss {
-  color: #e57373;
-}
-.scoreRow {
-  display: flex;
-  align-items: baseline;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 1px;
-  margin-bottom: 2px;
-}
-.scoreKills, .scoreAssists {
-  color: #fff;
-  font-weight: 600;
-}
-.scoreDeaths {
-  color: #E84057;
-  font-weight: 600;
-  margin: 0 4px;
-}
-.kdaRatio {
-  font-size: 1rem;
-  color: #b0bec5;
-  font-weight: 500;
-  margin-top: 2px;
-  margin-bottom: 2px;
-}
-.matchStats {
-  font-size: 0.95rem;
-  color: var(--muted-text);
+
+/* ===== Small phones (≤480px) ===== */
+@media (max-width: 480px) {
+  .matchesList {
+    padding: 0 4px;
+    gap: 8px;
+  }
+
+  .matchCard {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .championIcon {
+    width: 24px;
+    height: 24px;
+    margin-right: 6px;
+  }
+
+  .scoreRow {
+    font-size: 1rem;
+  }
+
+  .matchDetails table {
+    min-width: 240px;
+  }
+
+  .matchDetails td,
+  .matchDetails th {
+    font-size: 0.8rem;
+    max-width: 60px;
+  }
+
+  .expandBtn {
+    width: 32px;
+    font-size: 1.1rem;
+  }
 }
