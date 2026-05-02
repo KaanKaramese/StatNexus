@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import styles from './SummonerSearch.module.css';
+import { apiFetch } from '../api';
 
 const SUGGESTION_DEBOUNCE_MS = 200;
 const SUGGESTION_LIMIT = 6;
@@ -88,8 +89,8 @@ export default function SummonerSearch({ onSearch }) {
 
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(
-          `/api/summoners/suggest?query=${encodeURIComponent(query)}&limit=${SUGGESTION_LIMIT}`
+        const response = await apiFetch(
+          `/summoners/suggest?query=${encodeURIComponent(query)}&limit=${SUGGESTION_LIMIT}`
         );
         if (!response.ok) {
           throw new Error('Failed to load suggestions.');

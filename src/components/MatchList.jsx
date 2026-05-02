@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './MatchList.module.css';
+import { apiFetch } from '../api';
 
 const MATCH_REQUEST_SPACING_MS = 120;
 const RATE_LIMIT_RETRY_LIMIT = 3;
@@ -18,9 +19,9 @@ const getRetryDelayMs = (response, attempt) => {
   return RATE_LIMIT_BACKOFF_BASE_MS * Math.pow(2, attempt);
 };
 
-const fetchJsonWithRetry = async (url, { retries = RATE_LIMIT_RETRY_LIMIT } = {}) => {
+const fetchJsonWithRetry = async (path, { retries = RATE_LIMIT_RETRY_LIMIT } = {}) => {
   for (let attempt = 0; attempt <= retries; attempt += 1) {
-    const response = await fetch(url);
+    const response = await apiFetch(path);
     if (response.ok) return response.json();
     if (response.status === 429 && attempt < retries) {
       const delayMs = getRetryDelayMs(response, attempt);
@@ -111,7 +112,7 @@ export default function MatchList({ puuID }) {
     const loadMatches = async () => {
       try {
         const ids = await fetchJsonWithRetry(
-          `/api/riot/lol/match/v5/matches/by-puuid/${puuID}/ids?start=0&count=10`
+          `/riot/lol/match/v5/matches/by-puuid/${puuID}/ids?start=0&count=10`
         );
         if (!Array.isArray(ids) || ids.length === 0) {
           setError('No matches found for this summoner.');
@@ -125,7 +126,7 @@ export default function MatchList({ puuID }) {
         for (const id of ids) {
           try {
             const match = await fetchJsonWithRetry(
-              `/api/riot/lol/match/v5/matches/${id}`
+              `/riot/lol/match/v5/matches/${id}`
             );
             matchData.push(match);
           } catch {
@@ -174,7 +175,7 @@ export default function MatchList({ puuID }) {
             // If expanding and timeline not loaded, fetch it
             if (!exp[idx] && !timelines[idx]) {
               setTimelines(tl => ({ ...tl, [idx]: { loading: true, error: '', events: [], duration: 0 } }));
-              fetchJsonWithRetry(`/api/riot/lol/match/v5/matches/${summary.matchId}/timeline`)
+              fetchJsonWithRetry(`/riot/lol/match/v5/matches/${summary.matchId}/timeline`)
                 .then(timelineData => {
                   // Parse events
                   const frames = timelineData.info && Array.isArray(timelineData.info.frames) ? timelineData.info.frames : [];

@@ -6,11 +6,12 @@ import LandingPage from './pages/LandingPage';
 import SummonerProfilePage from './pages/SummonerProfilePage';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { apiFetch } from './api';
 
 async function trackSummonerSearch(gameName, tagLine, profileIconId, summonerLevel) {
   if (!gameName || !tagLine) return;
   try {
-    await fetch('/api/summoners/track', {
+    await apiFetch('/summoners/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ gameName, tagLine, profileIconId, summonerLevel })
@@ -67,7 +68,7 @@ function AppContent() {
     setProfile(null);
     setPuuID(null);
     try {
-      const response = await fetch(`/api/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(username)}/${encodeURIComponent(tagLine)}`);
+      const response = await apiFetch(`/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(username)}/${encodeURIComponent(tagLine)}`);
       if (!response.ok) {
         if (response.status === 404) setError('Summoner not found. Please check the name and tag.');
         else if (response.status === 403) setError('API key invalid or expired. Please update your API key.');
@@ -80,13 +81,13 @@ function AppContent() {
         return;
       }
       setPuuID(res.puuid);
-      const summonerRes = await fetch(`/api/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}`);
+      const summonerRes = await apiFetch(`/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}`);
       if (!summonerRes.ok) {
         setError('Failed to fetch summoner profile info.');
         return;
       }
       const summonerData = await summonerRes.json();
-      const rankRes = await fetch(`/api/riot/lol/league/v4/entries/by-puuid/${res.puuid}`);
+      const rankRes = await apiFetch(`/riot/lol/league/v4/entries/by-puuid/${res.puuid}`);
       let rankText = '-';
       if (rankRes.ok) {
         const rankData = await rankRes.json();

@@ -8,7 +8,7 @@ const RIOT_API_KEY = Deno.env.get('RIOT_API_KEY') ?? ''
 const RIOT_CLIENT_ID = Deno.env.get('RIOT_CLIENT_ID') ?? ''
 const RIOT_CLIENT_SECRET = Deno.env.get('RIOT_CLIENT_SECRET') ?? ''
 const RIOT_REDIRECT_URI = Deno.env.get('RIOT_REDIRECT_URI') ?? ''
-const CORS_ORIGIN = Deno.env.get('CORS_ORIGIN') ?? 'http://localhost:5173'
+const CORS_ORIGIN = Deno.env.get('CORS_ORIGIN') ?? '*'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 

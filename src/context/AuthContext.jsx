@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { apiFetch } from '../api';
 
 const STORAGE_KEY_TOKEN = 'statnexus_token';
 const STORAGE_KEY_USER = 'statnexus_user';
@@ -54,7 +55,7 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    fetch('/api/auth/me', {
+    apiFetch('/auth/me', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -75,7 +76,7 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/riot/login');
+      const res = await apiFetch('/auth/riot/login');
       if (!res.ok) throw new Error('Failed to get login URL');
       const { url, state } = await res.json();
       localStorage.setItem(STORAGE_KEY_STATE, state);
@@ -95,7 +96,7 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const res = await fetch(`/api/auth/riot/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`);
+      const res = await apiFetch(`/auth/riot/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`);
       if (!res.ok) throw new Error('Callback failed');
       const { token, user: riotUser } = await res.json();
       saveToStorage(token, riotUser);
@@ -110,7 +111,7 @@ export function AuthProvider({ children }) {
   const logout = useCallback(() => {
     clearStorage();
     setUser(null);
-    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+    apiFetch('/auth/logout', { method: 'POST' }).catch(() => {});
   }, []);
 
   return (
