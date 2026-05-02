@@ -9,7 +9,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "node server/index.js"
+    "server": "supabase functions serve api --env-file .env",
+    "func:deploy": "supabase functions deploy api"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.1",

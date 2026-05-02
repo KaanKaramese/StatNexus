@@ -1,28 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import AuthModal from './components/AuthModal';
-import MainApp from './pages/MainApp';
 import GuidePage from './pages/GuidePage';
 import LandingPage from './pages/LandingPage';
 import SummonerProfilePage from './pages/SummonerProfilePage';
 import { LanguageProvider } from './context/LanguageContext';
-
-function getSession() {
-  return localStorage.getItem('lolapp_user');
-}
-function setSession(username) {
-  localStorage.setItem('lolapp_user', username);
-}
-function clearSession() {
-  localStorage.removeItem('lolapp_user');
-}
-function getUsers() {
-  return JSON.parse(localStorage.getItem('lolapp_users') || '{}');
-}
-function setUsers(users) {
-  localStorage.setItem('lolapp_users', JSON.stringify(users));
-}
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 async function trackSummonerSearch(gameName, tagLine, profileIconId, summonerLevel) {
   if (!gameName || !tagLine) return;
@@ -37,77 +20,53 @@ async function trackSummonerSearch(gameName, tagLine, profileIconId, summonerLev
   }
 }
 
-export default function App() {
-  const [user, setUser] = useState(getSession());
-  const [authModal, setAuthModal] = useState({ show: false, type: 'login', error: '' });
-  const [page, setPage] = useState('landing'); // 'landing', 'profile', 'guides'
+function AppContent() {
+  const { user, isLoading, logout, handleCallback } = useAuth();
+  const [authModal, setAuthModal] = useState({ show: false, error: '' });
+  const [page, setPage] = useState('landing');
   const [profile, setProfile] = useState(null);
   const [puuID, setPuuID] = useState(null);
   const [summonerError, setSummonerError] = useState('');
 
+  // Handle OAuth callback from Riot redirect
   useEffect(() => {
-    setUser(getSession());
-  }, []);
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const state = params.get('state');
 
-  const handleShowLogin = () => setAuthModal({ show: true, type: 'login', error: '' });
-  const handleCloseAuth = (type) => setAuthModal({ show: true, type, error: '' });
+    if (code) {
+      handleCallback(code, state).then((success) => {
+        // Clean up URL
+        const url = new URL(window.location);
+        url.searchParams.delete('code');
+        url.searchParams.delete('state');
+        window.history.replaceState({}, '', url.toString());
+
+        if (!success) {
+          setAuthModal({ show: true, error: 'Login failed. Please try again.' });
+        }
+      });
+    }
+  }, [handleCallback]);
+
+  const handleShowLogin = () => setAuthModal({ show: true, error: '' });
+  const handleCloseAuth = () => setAuthModal({ show: false, error: '' });
+
   const handleLogout = () => {
-    clearSession();
-    setUser(null);
-    setAuthModal({ show: false, type: 'login', error: '' });
+    logout();
     setPage('landing');
     setProfile(null);
     setPuuID(null);
     setSummonerError('');
   };
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const username = e.target[0].value.trim();
-    const password = e.target[1].value;
-    const users = getUsers();
-    if (!users[username]) {
-      setAuthModal(m => ({ ...m, error: 'User not found.' }));
-      return;
-    }
-    if (users[username] !== password) {
-      setAuthModal(m => ({ ...m, error: 'Incorrect password.' }));
-      return;
-    }
-    setSession(username);
-    setUser(username);
-    setAuthModal({ show: false, type: 'login', error: '' });
-    setPage('landing');
-  };
-  const handleSignup = (e) => {
-    e.preventDefault();
-    const username = e.target[0].value.trim();
-    const password = e.target[1].value;
-    if (!username || !password) {
-      setAuthModal(m => ({ ...m, error: 'Please fill all fields.' }));
-      return;
-    }
-    const users = getUsers();
-    if (users[username]) {
-      setAuthModal(m => ({ ...m, error: 'Username already exists.' }));
-      return;
-    }
-    users[username] = password;
-    setUsers(users);
-    setSession(username);
-    setUser(username);
-    setAuthModal({ show: false, type: 'login', error: '' });
-  };
 
-  // SPA navigation handler
   const handleNavigate = (targetPage) => setPage(targetPage);
 
-  // Summoner search logic (used by LandingPage)
   const handleSummonerSearch = async (username, tagLine, setError) => {
     setSummonerError('');
     setProfile(null);
     setPuuID(null);
     try {
-      // Step 1: Get PUUID from Riot ID through the backend
       const response = await fetch(`/api/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(username)}/${encodeURIComponent(tagLine)}`);
       if (!response.ok) {
         if (response.status === 404) setError('Summoner not found. Please check the name and tag.');
@@ -121,14 +80,12 @@ export default function App() {
         return;
       }
       setPuuID(res.puuid);
-      // Step 2: Get Summoner Info (level, icon, summonerId) from PUUID
       const summonerRes = await fetch(`/api/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}`);
       if (!summonerRes.ok) {
         setError('Failed to fetch summoner profile info.');
         return;
       }
       const summonerData = await summonerRes.json();
-      // Step 3: Get Rank from PUUID
       const rankRes = await fetch(`/api/riot/lol/league/v4/entries/by-puuid/${res.puuid}`);
       let rankText = '-';
       if (rankRes.ok) {
@@ -152,24 +109,37 @@ export default function App() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <LanguageProvider>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+          <span style={{ color: 'var(--muted-text)' }}>Loading...</span>
+        </div>
+      </LanguageProvider>
+    );
+  }
+
+  const displayName = user ? `${user.gameName}#${user.tagLine}` : null;
+
   return (
     <LanguageProvider>
-      <Navbar user={user} onLogout={handleLogout} onShowLogin={handleShowLogin} onNavigate={handleNavigate} currentPage={page} />
+      <Navbar user={displayName} onLogout={handleLogout} onShowLogin={handleShowLogin} onNavigate={handleNavigate} currentPage={page} />
       <AuthModal
         show={authModal.show}
-        type={authModal.type}
         onClose={handleCloseAuth}
-        onLogin={handleLogin}
-        onSignup={handleSignup}
         error={authModal.error}
       />
-      {user ? (
-        page === 'guides' ? <GuidePage /> : null
-      ) : (
-        page === 'landing' ? <LandingPage onSearch={handleSummonerSearch} /> :
-        page === 'profile' ? <SummonerProfilePage profile={profile} puuID={puuID} error={summonerError} /> :
-        page === 'guides' ? <GuidePage /> : null
-      )}
+      {page === 'landing' && <LandingPage onSearch={handleSummonerSearch} />}
+      {page === 'profile' && <SummonerProfilePage profile={profile} puuID={puuID} error={summonerError} />}
+      {page === 'guides' && <GuidePage />}
     </LanguageProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

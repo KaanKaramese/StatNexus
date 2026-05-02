@@ -1,32 +1,67 @@
 
-
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './AuthModal.module.css';
+import { useAuth } from '../context/AuthContext';
 
-export default function AuthModal({ show, type, onClose, onLogin, onSignup, error }) {
+export default function AuthModal({ show, onClose, error: externalError }) {
+  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
   if (!show) return null;
+
+  const handleRiotLogin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      await login();
+    } catch {
+      setError('Failed to start login. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setError('');
+    onClose();
+  };
+
+  const displayError = externalError || error;
+
   return (
-    <div className={styles.authOverlay}>
-      <div className={styles.authModal} style={{display: type==='login' ? '' : 'none'}}>
-        <h2 className={styles.authModalTitle}>Login</h2>
-        <form className={styles.authModalForm} onSubmit={onLogin}>
-          <input className={styles.authModalInput} type="text" id="login-username" placeholder="Username" required autoComplete="username" />
-          <input className={styles.authModalInput} type="password" id="login-password" placeholder="Password" required autoComplete="current-password" />
-          <button className={styles.authModalButton} type="submit">Login</button>
-        </form>
-        <button style={{marginTop:12,background:'#e84057',color:'#fff',padding:'10px 24px',borderRadius:8,fontWeight:'bold',display:'block',width:'100%',border:'none',cursor:'pointer',fontSize:'1.08em'}}>Login with Riot</button>
-        <p className={styles.authModalText}>Don't have an account? <a className={styles.authModalLink} href="#" onClick={e=>{e.preventDefault();onClose('signup')}}>Sign up</a></p>
-        <div className={styles.authError}>{type==='login' && error}</div>
-      </div>
-      <div className={styles.authModal} style={{display: type==='signup' ? '' : 'none'}}>
-        <h2 className={styles.authModalTitle}>Sign Up</h2>
-        <form className={styles.authModalForm} onSubmit={onSignup}>
-          <input className={styles.authModalInput} type="text" id="signup-username" placeholder="Username" required autoComplete="username" />
-          <input className={styles.authModalInput} type="password" id="signup-password" placeholder="Password" required autoComplete="new-password" />
-          <button className={styles.authModalButton} type="submit">Sign Up</button>
-        </form>
-        <p className={styles.authModalText}>Already have an account? <a className={styles.authModalLink} href="#" onClick={e=>{e.preventDefault();onClose('login')}}>Login</a></p>
-        <div className={styles.authError}>{type==='signup' && error}</div>
+    <div className={styles.authOverlay} onClick={handleClose}>
+      <div className={styles.authModal} onClick={(e) => e.stopPropagation()}>
+        <h2 className={styles.authModalTitle}>Login with Riot Games</h2>
+        <p style={{ color: 'var(--muted-text)', textAlign: 'center', fontSize: '0.92rem', lineHeight: 1.5 }}>
+          Link your League of Legends account to access personalized stats, save favorites, and more.
+        </p>
+        <button
+          onClick={handleRiotLogin}
+          disabled={loading}
+          style={{
+            marginTop: 12,
+            background: '#e84057',
+            color: '#fff',
+            padding: '12px 32px',
+            borderRadius: 8,
+            fontWeight: 'bold',
+            fontSize: '1.1em',
+            border: 'none',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            opacity: loading ? 0.7 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            width: '100%',
+            justifyContent: 'center',
+          }}
+        >
+          {loading ? 'Redirecting...' : 'Login with Riot Games'}
+        </button>
+        {displayError && <div className={styles.authError}>{displayError}</div>}
+        <p className={styles.authModalText} style={{ fontSize: '0.82rem', color: 'var(--muted-text)', opacity: 0.7 }}>
+          By logging in, you agree to Riot Games&apos; Terms of Service and Privacy Policy.
+        </p>
       </div>
     </div>
   );

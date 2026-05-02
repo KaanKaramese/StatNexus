@@ -5,4 +5,13 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/StatNexus/',
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://ofxmxllxnkmdcbutnnhy.supabase.co',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/functions/v1/api'),
+      },
+    },
+  },
 })
