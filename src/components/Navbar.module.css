@@ -1,11 +1,17 @@
 /* ===== Desktop Layout ===== */
 .mainNavbar {
-  background: var(--surface-gunmetal);
-  border-bottom: 1px solid var(--subtle-contrast);
+  background: rgba(38, 42, 49, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(153, 157, 165, 0.15);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+.navScaleWrap {
+  zoom: 0.75;
 }
 
 .navbarContent {
@@ -49,40 +55,53 @@
 .navbarLink {
   display: inline-block;
   padding: 8px clamp(14px, 2vw, 22px);
-  border-radius: 999px;
-  background: var(--bg-charcoal);
-  color: #d1d5db;
-  font-weight: 600;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-text);
+  font-weight: 500;
   font-size: clamp(0.9rem, 1.2vw, 1em);
-  border: 1.5px solid var(--subtle-contrast);
+  border: none;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border 0.2s;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
   white-space: nowrap;
   font-family: inherit;
 }
 
 .navbarLink:hover,
 .navbarLink:focus-visible {
+  background: rgba(255, 255, 255, 0.06);
   color: #fff;
-  border-color: var(--light-accent-orchid);
+}
+
+.navbarLink:active {
+  transform: scale(0.97);
 }
 
 .navbarLinkActive {
-  background: var(--bg-charcoal);
+  background: transparent;
   color: #fff;
-  border-color: var(--primary-accent);
+  font-weight: 600;
+}
+
+/* ===== Navbar Divider ===== */
+.navbarDivider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
 }
 
 /* ===== Animated Underline ===== */
 .navbarUnderline {
   position: absolute;
   bottom: -6px;
-  height: 4px;
-  background: var(--primary-accent);
+  height: 3px;
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
   border-radius: 2px 2px 0 0;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.5), 0 0 24px rgba(6, 182, 212, 0.2);
   pointer-events: none;
   z-index: 2;
-  transition: left 0.25s cubic-bezier(.4, 0, .2, 1), width 0.25s cubic-bezier(.4, 0, .2, 1);
+  transition: left 0.35s cubic-bezier(.34, 1.2, .64, 1), width 0.35s cubic-bezier(.34, 1.2, .64, 1);
 }
 
 /* ===== Right Group (User + Hamburger) ===== */
@@ -147,6 +166,10 @@
 
 /* ===== Mobile (≤768px) ===== */
 @media (max-width: 768px) {
+  .navScaleWrap {
+    zoom: 0.9;
+  }
+
   .navbarToggle {
     display: flex;
   }
@@ -155,7 +178,7 @@
     display: block;
     position: fixed;
     inset: 0;
-    top: 64px;
+    top: 58px;
     background: rgba(0, 0, 0, 0.5);
     z-index: 99;
     animation: fadeIn 0.2s ease;
@@ -163,14 +186,16 @@
 
   .navbarLinks {
     position: fixed;
-    top: 64px;
+    top: 58px;
     right: 0;
     width: min(280px, 80vw);
     flex-direction: column;
     align-items: stretch;
     gap: 4px;
-    background: var(--surface-gunmetal);
-    border: 1px solid var(--subtle-contrast);
+    background: rgba(38, 42, 49, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(153, 157, 165, 0.15);
     border-top: none;
     border-radius: 0 0 12px 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -193,6 +218,10 @@
     border-radius: 8px;
   }
 
+  .navbarDivider {
+    display: none;
+  }
+
   .navbarUnderline {
     display: none;
   }
@@ -200,18 +229,22 @@
 
 /* ===== Small phones (≤480px) ===== */
 @media (max-width: 480px) {
+  .navScaleWrap {
+    zoom: 0.9;
+  }
+
   .navbarContent {
     height: 56px;
   }
 
   .navbarLinks {
-    top: 56px;
+    top: 50px;
     width: 100vw;
     border-radius: 0;
   }
 
   .navbarOverlay {
-    top: 56px;
+    top: 50px;
   }
 
   .logoImg {

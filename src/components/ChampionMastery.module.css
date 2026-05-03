@@ -1,0 +1,96 @@
+.masterySection {
+  width: 100%;
+  max-width: min(600px, 90vw);
+  margin: 0 auto;
+}
+
+.masteryTitle {
+  font-size: var(--text-h3);
+  color: var(--light-accent-orchid);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.masteryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+}
+
+.masteryCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-charcoal);
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.masteryCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.masteryIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-accent);
+  flex-shrink: 0;
+}
+
+.masteryInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.champName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.champStats {
+  font-size: 0.8rem;
+  color: var(--muted-text);
+}
+
+.winBarTrack {
+  height: 4px;
+  background: var(--surface-gunmetal);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2px;
+  display: flex;
+}
+
+.winBarFill {
+  height: 100%;
+  background: var(--win-color);
+  border-radius: 2px 0 0 2px;
+  transition: width 0.3s ease;
+}
+
+.winBarLoss {
+  height: 100%;
+  background: var(--loss-color);
+  border-radius: 0 2px 2px 0;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  .masteryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .masteryCard {
+    padding: 6px 10px;
+  }
+}

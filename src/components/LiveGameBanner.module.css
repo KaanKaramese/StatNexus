@@ -1,0 +1,79 @@
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.banner {
+  width: 100%;
+  max-width: min(480px, 95vw);
+  margin-bottom: 16px;
+}
+
+.bannerInner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #2d1b69, #7c3aed);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+  animation: bannerIn 0.4s ease both;
+}
+
+@keyframes bannerIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.bannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liveDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff4444;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.liveLabel {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #ff4444;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bannerChamp {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.bannerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.bannerChampName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.bannerMode {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.bannerDuration {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}

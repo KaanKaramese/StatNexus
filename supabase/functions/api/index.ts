@@ -3,6 +3,7 @@ import { SignJWT, jwtVerify } from 'https://esm.sh/jose@5.9.6'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 const JWT_SECRET = Deno.env.get('SUPABASE_JWT_SECRET') ?? ''
 const RIOT_API_KEY = Deno.env.get('RIOT_API_KEY') ?? ''
 const RIOT_CLIENT_ID = Deno.env.get('RIOT_CLIENT_ID') ?? ''
@@ -11,6 +12,9 @@ const RIOT_REDIRECT_URI = Deno.env.get('RIOT_REDIRECT_URI') ?? ''
 const CORS_ORIGIN = Deno.env.get('CORS_ORIGIN') ?? '*'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const supabaseAdmin = SUPABASE_SERVICE_ROLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+  : supabase
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': CORS_ORIGIN,
@@ -340,6 +344,75 @@ async function handleTrack(req: Request) {
   }
 }
 
+async function handleSaveRankHistory(req: Request) {
+  try {
+    const body = await req.json()
+    const { puuid, queueType, tier, rankDivision, leaguePoints, wins, losses } = body
+    if (!puuid || !tier || !rankDivision) {
+      return errorResponse('Missing required fields')
+    }
+
+    // Try dedup RPC first, fall back to direct insert with admin client
+    const { error: rpcError } = await supabase.rpc('save_rank_snapshot', {
+      p_puuid: puuid,
+      p_queue_type: queueType || 'RANKED_SOLO_5x5',
+      p_tier: tier,
+      p_rank_division: rankDivision,
+      p_league_points: leaguePoints ?? 0,
+      p_wins: wins ?? 0,
+      p_losses: losses ?? 0,
+    })
+
+    if (!rpcError) return json({ ok: true })
+
+    console.warn('RPC save_rank_snapshot failed, falling back to admin insert:', rpcError)
+
+    // Fallback: direct insert via admin client (bypasses RLS)
+    const { error: insertError } = await supabaseAdmin
+      .from('rank_history')
+      .insert({
+        puuid,
+        queue_type: queueType || 'RANKED_SOLO_5x5',
+        tier,
+        rank_division: rankDivision,
+        league_points: leaguePoints ?? 0,
+        wins: wins ?? 0,
+        losses: losses ?? 0,
+      })
+
+    if (insertError) {
+      console.error('Admin insert error:', insertError)
+      return errorResponse('Failed to save rank snapshot', 500)
+    }
+    return json({ ok: true })
+  } catch (err) {
+    console.error('saveRankHistory error:', err)
+    return errorResponse('Failed to save rank snapshot', 500)
+  }
+}
+
+async function handleGetRankHistory(url: URL) {
+  const puuid = url.searchParams.get('puuid')
+  const queueType = url.searchParams.get('queueType') || 'RANKED_SOLO_5x5'
+  if (!puuid) return errorResponse('Missing puuid parameter')
+  try {
+    const { data, error } = await supabase
+      .from('rank_history')
+      .select('tier, rank_division, league_points, wins, losses, recorded_at')
+      .eq('puuid', puuid)
+      .eq('queue_type', queueType)
+      .order('recorded_at', { ascending: true })
+    if (error) {
+      console.error('Get rank history error:', error)
+      return errorResponse('Failed to fetch rank history', 500)
+    }
+    return json(data || [])
+  } catch (err) {
+    console.error('getRankHistory error:', err)
+    return errorResponse('Failed to fetch rank history', 500)
+  }
+}
+
 async function handleRiotProxy(req: Request, requestPath: string) {
   try {
     const reqUrl = new URL(req.url)
@@ -504,6 +577,9 @@ Deno.serve(async (req) => {
 
     if (matchPath(path, '/summoners/suggest')) return await handleSuggest(url)
     if (matchPath(path, '/summoners/track')) return await handleTrack(req)
+
+    if (matchPath(path, '/summoners/rank-history') && req.method === 'POST') return await handleSaveRankHistory(req)
+    if (matchPath(path, '/summoners/rank-history') && req.method === 'GET') return await handleGetRankHistory(url)
 
     if (matchPath(path, '/summoners/backfill-icons')) {
       const authHeader = req.headers.get('authorization')

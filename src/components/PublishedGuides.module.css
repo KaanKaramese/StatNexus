@@ -39,6 +39,13 @@
   word-break: break-word;
 }
 
+.guidesEmpty {
+  color: var(--muted-text);
+  text-align: center;
+  padding: 24px 0;
+  font-size: var(--text-body);
+}
+
 /* ===== Tablet (≤1024px) ===== */
 @media (max-width: 1024px) {
   .guideCard {

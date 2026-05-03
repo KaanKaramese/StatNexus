@@ -17,7 +17,7 @@ export default function PublishedGuides() {
     window.addEventListener('guide-published', handler);
     return () => window.removeEventListener('guide-published', handler);
   }, []);
-  if (!guides.length) return <div style={{ color: '#b0bec5' }}>No guides published yet.</div>;
+  if (!guides.length) return <div className={styles.guidesEmpty}>No guides published yet.</div>;
   return (
     <div className={styles.publishedGuides}>
       {guides.map((g, i) => (

@@ -1,19 +1,23 @@
-/* ===== Desktop ===== */
 .profileCard {
   display: flex;
   align-items: center;
   background: var(--surface-gunmetal);
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: 0 2px 12px rgba(79, 195, 247, 0.08);
   padding: clamp(14px, 2vw, 18px) clamp(18px, 3vw, 28px);
   width: 100%;
-  max-width: min(420px, 95vw);
+  max-width: min(480px, 95vw);
   gap: clamp(16px, 3vw, 24px);
 }
 
+.avatarSection {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .profileAvatarContainer {
-  width: clamp(60px, 8vw, 80px);
-  height: clamp(60px, 8vw, 80px);
+  width: clamp(72px, 10vw, 96px);
+  height: clamp(72px, 10vw, 96px);
   border-radius: 50%;
   overflow: hidden;
   background: var(--bg-charcoal);
@@ -29,16 +33,45 @@
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--primary-accent);
+  border: 2px solid var(--muted-text);
   background: var(--surface-gunmetal);
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--muted-text);
+}
+
+.levelBadge {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-charcoal);
+  border: 1.5px solid var(--muted-text);
+  border-radius: 8px;
+  padding: 0 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--heading);
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  z-index: 3;
 }
 
 .profileInfo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   align-items: flex-start;
   min-width: 0;
+  flex: 1;
 }
 
 .profileName {
@@ -46,24 +79,15 @@
   font-weight: 700;
   color: var(--light-accent-orchid);
   letter-spacing: 0.5px;
-  margin-bottom: 2px;
   word-break: break-word;
-}
-
-.profileLevel {
-  font-size: clamp(0.95rem, 1.5vw, 1.05rem);
-  color: var(--muted-text);
-  margin-bottom: 2px;
 }
 
 .profileRank {
   font-size: clamp(0.95rem, 1.5vw, 1.08rem);
   color: var(--heading);
-  background: var(--primary-accent);
   border-radius: 6px;
   padding: 2px 10px;
   font-weight: 600;
-  margin-top: 2px;
   display: inline-block;
 }
 
@@ -73,14 +97,70 @@
   margin-left: 4px;
 }
 
-/* ===== Tablet (≤1024px) ===== */
-@media (max-width: 1024px) {
-  .profileCard {
-    max-width: min(420px, 90vw);
-  }
+.rankSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
 }
 
-/* ===== Mobile (≤768px) ===== */
+.lpBarContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 240px;
+}
+
+.lpBarTrack {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-charcoal);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lpBarFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.lpText {
+  font-size: var(--text-sm);
+  color: var(--muted-text);
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+.winLossRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.winText {
+  color: var(--win-color);
+}
+
+.lossText {
+  color: var(--loss-color);
+}
+
+.sep {
+  color: var(--muted-text);
+  font-weight: 400;
+}
+
+.winRate {
+  color: var(--muted-text);
+  font-weight: 500;
+  margin-left: 2px;
+}
+
 @media (max-width: 768px) {
   .profileCard {
     flex-direction: column;
@@ -98,9 +178,16 @@
   .profileName {
     text-align: center;
   }
+
+  .rankSection {
+    align-items: center;
+  }
+
+  .lpBarContainer {
+    max-width: 180px;
+  }
 }
 
-/* ===== Small phones (≤480px) ===== */
 @media (max-width: 480px) {
   .profileCard {
     max-width: 100%;
@@ -108,17 +195,22 @@
     gap: 10px;
   }
 
-  .profileAvatarContainer,
-  .profileAvatar {
-    width: 56px;
-    height: 56px;
+  .profileAvatarContainer {
+    width: 64px;
+    height: 64px;
+  }
+
+  .levelBadge {
+    font-size: 0.7rem;
+    padding: 0 6px;
+    bottom: -8px;
+    line-height: 1.5;
   }
 
   .profileName {
     font-size: 1.1rem;
   }
 
-  .profileLevel,
   .profileRank {
     font-size: 0.9rem;
   }

@@ -74,6 +74,7 @@ export default function Navbar({ user, onLogout, onShowLogin }) {
 
   return (
     <nav className={styles.mainNavbar} ref={navRef}>
+      <div className={styles.navScaleWrap}>
       <div className={styles.navbarContent}>
         <button
           className={styles.navbarLogo}
@@ -97,6 +98,7 @@ export default function Navbar({ user, onLogout, onShowLogin }) {
               {t('home')}
             </button>
           </li>
+          <li className={styles.navbarDivider} />
           <li>
             <button
               ref={guidesRef}
@@ -134,8 +136,9 @@ export default function Navbar({ user, onLogout, onShowLogin }) {
             <span className={`${styles.navbarToggleBar} ${menuOpen ? styles.barBot : ''}`} />
           </button>
         </div>
+        </div>
       </div>
-      {menuOpen && <div className={styles.navbarOverlay} onClick={() => setMenuOpen(false)} />}
-    </nav>
+        {menuOpen && <div className={styles.navbarOverlay} onClick={() => setMenuOpen(false)} />}
+      </nav>
   );
 }

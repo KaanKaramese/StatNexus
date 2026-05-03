@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import styles from './SummonerSearch.module.css';
 import { apiFetch } from '../api';
+import { profileIcon } from '../utils/ddragon';
+import { getRecentSearches, removeRecentSearch, clearRecentSearches } from '../utils/recentSearches';
 
 const SUGGESTION_DEBOUNCE_MS = 200;
 const SUGGESTION_LIMIT = 6;
@@ -18,22 +20,65 @@ export default function SummonerSearch({ onSearch }) {
   const requestIdRef = useRef(0);
   const { t } = useLanguage();
 
+  const [recentSearches, setRecentSearches] = useState([]);
+  const [showRecentSearches, setShowRecentSearches] = useState(false);
+  const [activeRecentIndex, setActiveRecentIndex] = useState(-1);
+
+  const refreshRecentSearches = () => {
+    const recents = getRecentSearches();
+    setRecentSearches(recents);
+    return recents;
+  };
+
+  useEffect(() => {
+    refreshRecentSearches();
+  }, []);
+
   const handleInput = e => {
     const value = e.target.value;
     setName(value);
     setActiveIndex(-1);
     if (value.trim()) {
       setShowSuggestions(true);
+      setShowRecentSearches(false);
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
+      const recents = refreshRecentSearches();
+      if (recents.length > 0) setShowRecentSearches(true);
     }
   };
+
   const handleSuggestionClick = suggestion => {
     setName(suggestion.gameName);
     setTag(suggestion.tagLine);
     setShowSuggestions(false);
     setActiveIndex(-1);
+  };
+
+  const handleRecentSearchClick = recent => {
+    setName(recent.gameName);
+    setTag(recent.tagLine);
+    setShowRecentSearches(false);
+    setActiveRecentIndex(-1);
+    onSearch(recent.gameName, recent.tagLine);
+  };
+
+  const handleRemoveRecent = (e, gameName, tagLine) => {
+    e.stopPropagation();
+    removeRecentSearch(gameName, tagLine);
+    const updated = refreshRecentSearches();
+    if (updated.length === 0) {
+      setShowRecentSearches(false);
+    }
+    setActiveRecentIndex(-1);
+  };
+
+  const handleClearRecent = () => {
+    clearRecentSearches();
+    setRecentSearches([]);
+    setShowRecentSearches(false);
+    setActiveRecentIndex(-1);
   };
 
   const getHighlightedText = (text, query) => {
@@ -51,6 +96,23 @@ export default function SummonerSearch({ onSearch }) {
   };
 
   const handleKeyDown = (e) => {
+    if (showRecentSearches && recentSearches.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveRecentIndex((current) => Math.min(current + 1, recentSearches.length - 1));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveRecentIndex((current) => Math.max(current - 1, 0));
+      } else if (e.key === 'Enter' && activeRecentIndex >= 0 && activeRecentIndex < recentSearches.length) {
+        e.preventDefault();
+        handleRecentSearchClick(recentSearches[activeRecentIndex]);
+      } else if (e.key === 'Escape') {
+        setShowRecentSearches(false);
+        setActiveRecentIndex(-1);
+      }
+      return;
+    }
+
     if (!showSuggestions) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -110,7 +172,9 @@ export default function SummonerSearch({ onSearch }) {
     return () => clearTimeout(timer);
   }, [name]);
 
-  const showDropdown = showSuggestions && (loadingSuggestions || suggestionsError || suggestions.length > 0);
+  const showRecentDropdown = showRecentSearches && recentSearches.length > 0;
+  const showSuggestionDropdown = showSuggestions && (loadingSuggestions || suggestionsError || suggestions.length > 0);
+  const showDropdown = showRecentDropdown || showSuggestionDropdown;
 
   return (
     <form className={styles.searchForm} onSubmit={handleSubmit} autoComplete="off">
@@ -122,54 +186,128 @@ export default function SummonerSearch({ onSearch }) {
           value={name}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
-          onFocus={() => name && setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => {
+            setShowSuggestions(false);
+            setShowRecentSearches(false);
+            setActiveRecentIndex(-1);
+          }, 100)}
+          onFocus={() => {
+            if (name) {
+              setShowSuggestions(true);
+              setShowRecentSearches(false);
+            } else {
+              const recents = refreshRecentSearches();
+              if (recents.length > 0) {
+                setShowRecentSearches(true);
+              }
+              setShowSuggestions(false);
+            }
+          }}
         />
         <input type="text" className={styles.textbox2} placeholder={t('tag')} value={tag} onChange={e => setTag(e.target.value)} />
         <button className={styles.button} type="submit">{t('search')}</button>
         {showDropdown && (
           <ul className={styles.autocompleteList}>
-            {loadingSuggestions && (
-              <li className={`${styles.autocompleteItem} ${styles.autocompleteItemMuted}`}>Loading...</li>
-            )}
-            {!loadingSuggestions && suggestionsError && (
-              <li className={`${styles.autocompleteItem} ${styles.autocompleteItemMuted}`}>{suggestionsError}</li>
-            )}
-            {!loadingSuggestions && !suggestionsError && suggestions.length === 0 && (
-              <li className={`${styles.autocompleteItem} ${styles.autocompleteItemMuted}`}>No matches found.</li>
-            )}
-            {suggestions.map((suggestion, index) => (
-              <li
-                key={`${suggestion.gameName}#${suggestion.tagLine}`}
-                className={`${styles.autocompleteItem} ${index === activeIndex ? styles.autocompleteItemActive : ''}`}
-                onMouseDown={() => handleSuggestionClick(suggestion)}
-                onMouseEnter={() => setActiveIndex(index)}
-              >
-                <div className={styles.suggestionRow}>
-                  {suggestion.profileIconId != null ? (
-                    <img
-                      className={styles.suggestionIcon}
-                      src={`https://ddragon.leagueoflegends.com/cdn/16.9.1/img/profileicon/${suggestion.profileIconId}.png`}
-                      alt="icon"
-                    />
-                  ) : (
-                    <div className={styles.suggestionIconPlaceholder}>?</div>
-                  )}
-                    <div className={styles.suggestionText}>
-                    <div className={styles.suggestionMeta}>
-                      <span className={styles.suggestionName}>{getHighlightedText(suggestion.gameName, name)}</span>
-                      <span className={styles.suggestionTag}>#{suggestion.tagLine}</span>
-                      {suggestion.region && (
-                        <span className={styles.suggestionRegion}>{suggestion.region.toUpperCase()}</span>
+            {showRecentDropdown ? (
+              <>
+                <li className={`${styles.autocompleteItem} ${styles.recentHeader}`}>
+                  <span>{t('recentlySearched')}</span>
+                  <button
+                    className={styles.clearButton}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={handleClearRecent}
+                    type="button"
+                  >
+                    {t('clear')}
+                  </button>
+                </li>
+                {recentSearches.map((recent, index) => (
+                  <li
+                    key={`${recent.gameName}#${recent.tagLine}`}
+                    className={`${styles.autocompleteItem} ${index === activeRecentIndex ? styles.autocompleteItemActive : ''}`}
+                    onMouseDown={() => handleRecentSearchClick(recent)}
+                    onMouseEnter={() => setActiveRecentIndex(index)}
+                  >
+                    <div className={styles.suggestionRow}>
+                      {recent.profileIconId != null ? (
+                        <img
+                          className={styles.suggestionIcon}
+                          src={profileIcon(recent.profileIconId) || ''}
+                          alt="icon"
+                        />
+                      ) : (
+                        <div className={styles.suggestionIconPlaceholder}>?</div>
                       )}
+                      <div className={styles.suggestionText}>
+                        <div className={styles.suggestionMeta}>
+                          <span className={styles.suggestionName}>{recent.gameName}</span>
+                          <span className={styles.suggestionTag}>#{recent.tagLine}</span>
+                          {recent.region && (
+                            <span className={styles.suggestionRegion}>{recent.region.toUpperCase()}</span>
+                          )}
+                        </div>
+                        {recent.summonerLevel != null && (
+                          <span className={styles.suggestionLevel}>Level {recent.summonerLevel}</span>
+                        )}
+                      </div>
+                      <button
+                        className={styles.removeButton}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={(e) => handleRemoveRecent(e, recent.gameName, recent.tagLine)}
+                        type="button"
+                        title="Remove"
+                      >
+                        ×
+                      </button>
                     </div>
-                    {suggestion.summonerLevel != null && (
-                      <span className={styles.suggestionLevel}>Level {suggestion.summonerLevel}</span>
-                    )}
-                  </div>
-                </div>
-              </li>
-            ))}
+                  </li>
+                ))}
+              </>
+            ) : (
+              <>
+                {loadingSuggestions && (
+                  <li className={`${styles.autocompleteItem} ${styles.autocompleteItemMuted}`}>Loading...</li>
+                )}
+                {!loadingSuggestions && suggestionsError && (
+                  <li className={`${styles.autocompleteItem} ${styles.autocompleteItemMuted}`}>{suggestionsError}</li>
+                )}
+                {!loadingSuggestions && !suggestionsError && suggestions.length === 0 && (
+                  <li className={`${styles.autocompleteItem} ${styles.autocompleteItemMuted}`}>No matches found.</li>
+                )}
+                {suggestions.map((suggestion, index) => (
+                  <li
+                    key={`${suggestion.gameName}#${suggestion.tagLine}`}
+                    className={`${styles.autocompleteItem} ${index === activeIndex ? styles.autocompleteItemActive : ''}`}
+                    onMouseDown={() => handleSuggestionClick(suggestion)}
+                    onMouseEnter={() => setActiveIndex(index)}
+                  >
+                    <div className={styles.suggestionRow}>
+                      {suggestion.profileIconId != null ? (
+                        <img
+                          className={styles.suggestionIcon}
+                          src={profileIcon(suggestion.profileIconId) || ''}
+                          alt="icon"
+                        />
+                      ) : (
+                        <div className={styles.suggestionIconPlaceholder}>?</div>
+                      )}
+                      <div className={styles.suggestionText}>
+                        <div className={styles.suggestionMeta}>
+                          <span className={styles.suggestionName}>{getHighlightedText(suggestion.gameName, name)}</span>
+                          <span className={styles.suggestionTag}>#{suggestion.tagLine}</span>
+                          {suggestion.region && (
+                            <span className={styles.suggestionRegion}>{suggestion.region.toUpperCase()}</span>
+                          )}
+                        </div>
+                        {suggestion.summonerLevel != null && (
+                          <span className={styles.suggestionLevel}>Level {suggestion.summonerLevel}</span>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </>
+            )}
           </ul>
         )}
       </div>

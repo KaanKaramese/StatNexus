@@ -1,22 +1,13 @@
-/* ===== Desktop ===== */
 .profilePageContainer {
   width: min(95vw, 1200px);
-  margin: clamp(40px, 6vw, 60px) auto 0 auto;
+  margin: clamp(40px, 6vw, 60px) auto clamp(40px, 6vw, 60px) auto;
   background: var(--surface-gunmetal);
-  border-radius: 18px;
+  border-radius: 12px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
   padding: clamp(16px, 3vw, 32px);
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.profileTitle {
-  font-size: var(--text-h2);
-  font-weight: 700;
-  color: var(--primary-accent);
-  margin-bottom: clamp(12px, 2vw, 18px);
-  text-align: center;
 }
 
 .matchesSection {
@@ -38,7 +29,32 @@
   font-size: var(--text-body);
 }
 
-/* ===== Tablet (≤1024px) ===== */
+.skeletonMatchList {
+  width: 100%;
+  max-width: min(650px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.skeletonMatchCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--surface-gunmetal);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--subtle-contrast);
+}
+
+.skeletonMatchInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 @media (max-width: 1024px) {
   .profilePageContainer {
     width: 96vw;
@@ -47,7 +63,6 @@
   }
 }
 
-/* ===== Mobile (≤768px) ===== */
 @media (max-width: 768px) {
   .profilePageContainer {
     width: 100vw;
@@ -56,23 +71,18 @@
     padding: 16px 12px 24px;
   }
 
-  .profileTitle {
-    margin-bottom: 12px;
-  }
-
   .matchesSection {
     margin-top: 20px;
   }
+
+  .skeletonMatchList {
+    max-width: 100vw;
+  }
 }
 
-/* ===== Small phones (≤480px) ===== */
 @media (max-width: 480px) {
   .profilePageContainer {
     padding: 12px 8px 20px;
-  }
-
-  .profileTitle {
-    font-size: 1.3rem;
   }
 
   .matchesSection h3 {

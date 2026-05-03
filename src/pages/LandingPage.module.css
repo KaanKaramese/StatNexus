@@ -10,31 +10,64 @@
   background: var(--bg-charcoal);
   padding: clamp(16px, 4vw, 40px);
   padding-top: clamp(80px, 12vw, 120px);
+  position: relative;
+  overflow: hidden;
+}
+
+.landingContainer::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(600px, 80vw);
+  height: min(600px, 80vw);
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowFloat 8s ease-in-out infinite;
+}
+
+@keyframes glowFloat {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -55%) scale(1.08);
+    opacity: 1;
+  }
 }
 
 .landingTitle {
   font-size: var(--text-h1);
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary-accent), #3398DB);
+  background: linear-gradient(135deg, #a78bfa, #7c3aed 40%, #06b6d4);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: clamp(8px, 1.5vw, 12px);
   text-align: center;
   line-height: 1.2;
+  position: relative;
+  z-index: 1;
 }
 
 .landingSubtitle {
-  font-size: var(--text-body);
+  font-size: clamp(1rem, 2vw, 1.25rem);
   color: var(--muted-text);
   margin-bottom: clamp(24px, 4vw, 32px);
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .searchSection {
   width: 100%;
   max-width: min(480px, 90vw);
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .errorMsg {
@@ -52,7 +85,7 @@
   border: 2px solid transparent;
   background-image:
     linear-gradient(var(--surface-gunmetal), var(--surface-gunmetal)),
-    linear-gradient(135deg, var(--primary-accent), #3398DB);
+    linear-gradient(135deg, #a78bfa, #7c3aed 40%, #06b6d4);
   background-origin: border-box;
   background-clip: padding-box, border-box;
   color: var(--body);
@@ -62,6 +95,8 @@
   font-family: inherit;
   outline: none;
   transition: box-shadow 0.2s, border 0.2s;
+  position: relative;
+  z-index: 1;
 }
 
 .landingContainer input::placeholder,
@@ -72,7 +107,7 @@
 
 .landingContainer input:focus,
 .landingContainer textarea:focus {
-  box-shadow: 0 0 0 2px rgba(51, 152, 219, 0.3);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.4);
 }
 
 /* ===== Tablet (≤1024px) ===== */

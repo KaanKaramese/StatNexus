@@ -1,7 +1,6 @@
-/* ===== Desktop ===== */
 .matchesList {
   width: 100%;
-  max-width: min(650px, 90vw);
+  max-width: min(900px, 94vw);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,47 +8,192 @@
   margin: 0 auto;
 }
 
-.matchCard {
+/* ─── Summary stats bar ─── */
+.summaryBar {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: min(600px, 90vw);
+  padding: 12px 16px;
   background: var(--surface-gunmetal);
   border-radius: 10px;
   box-shadow: 0 2px 8px var(--subtle-contrast);
-  padding: clamp(10px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
+  justify-content: space-around;
+}
+
+.summaryStat {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 0;
-  color: var(--body);
-  font-size: clamp(0.95rem, 1.5vw, 1rem);
+  align-items: center;
+  gap: 2px;
+}
+
+.summaryValue {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.summaryLabel {
+  font-size: clamp(0.7rem, 1vw, 0.8rem);
+  color: var(--muted-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ─── Filter pills ─── */
+.filterRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
   width: 100%;
   max-width: min(600px, 90vw);
+  justify-content: center;
+}
+
+.filterPill {
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--subtle-contrast);
+  background: transparent;
+  color: var(--body);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filterPill:hover {
+  border-color: var(--primary-accent);
+  color: var(--primary-accent);
+}
+
+.filterPillActive {
+  background: var(--primary-accent);
+  border-color: var(--primary-accent);
+  color: #fff;
+}
+
+/* ─── Role badge ─── */
+.roleBadge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.roleTop { background: #4caf50; color: #fff; }
+.roleJungle { background: #ff9800; color: #fff; }
+.roleMiddle { background: #9c27b0; color: #fff; }
+.roleBottom { background: #2196f3; color: #fff; }
+.roleUtility { background: #f44336; color: #fff; }
+
+/* ─── Outer card ─── */
+.matchCardOuter {
+  width: 100%;
+  max-width: min(850px, 92vw);
   margin: 0 auto;
-  overflow: visible;
+}
+
+/* ─── Inner card (win/loss background) ─── */
+.matchCardInner {
   position: relative;
-}
-
-.matchDetails {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  box-sizing: border-box;
-  padding-top: 12px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.matchDetails table {
-  width: 100%;
-  min-width: 320px;
-  table-layout: auto;
-}
-
-.matchDetails td,
-.matchDetails th {
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  border-radius: 12px;
   overflow: hidden;
-  max-width: 120px;
 }
 
+.cardWin {
+  background: #2F436E;
+}
+
+.cardLoss {
+  background: #f7665e33;
+}
+
+/* ─── Left color strip ─── */
+.cardBorder {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  border-radius: 12px 0 0 12px;
+}
+
+.borderWin {
+  background: #5383E8;
+}
+
+.borderLoss {
+  background: #E84057;
+}
+
+/* ─── Summary row (always visible) ─── */
+.summaryRow {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+.champColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.champIconSummary {
+  width: 48px;
+  height: 48px;
+}
+
+/* ─── Spells ─── */
+.spellRow {
+  display: flex;
+  gap: 2px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.spellIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  border: 1px solid var(--subtle-contrast);
+}
+
+/* ─── Items row (summary) ─── */
+.itemRow {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.itemIconSmall {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.itemIconSmallEmpty {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  border: 1px dashed var(--muted-text);
+  opacity: 0.3;
+}
+
+/* ─── Champion icon (summary) ─── */
 .championIcon {
   width: clamp(32px, 5vw, 40px);
   height: clamp(32px, 5vw, 40px);
@@ -60,6 +204,7 @@
   flex-shrink: 0;
 }
 
+/* ─── Match info column ─── */
 .matchInfo {
   flex: 1;
   display: flex;
@@ -76,7 +221,7 @@
 }
 
 .win {
-  color: #4fc3f7;
+  color: var(--win-color);
 }
 
 .loss {
@@ -100,8 +245,14 @@
 }
 
 .scoreDeaths {
-  color: #E84057;
+  color: var(--score-death);
   font-weight: 600;
+  margin: 0 4px;
+}
+
+.scoreSep {
+  color: var(--muted-text);
+  font-weight: 400;
   margin: 0 4px;
 }
 
@@ -118,13 +269,15 @@
   color: var(--muted-text);
 }
 
-/* Expand button */
+.statHighlight {
+  color: var(--info-sky);
+}
+
+/* ─── Expand button ─── */
 .expandBtn {
-  position: absolute;
-  right: 0;
-  top: 0;
   width: 44px;
   height: 100%;
+  min-height: 80px;
   background: var(--primary-accent);
   border: none;
   border-radius: 0 10px 10px 0;
@@ -135,12 +288,12 @@
   font-size: 1.6rem;
   cursor: pointer;
   transition: background 0.2s;
-  z-index: 3;
+  flex-shrink: 0;
   padding: 0;
 }
 
 .expandBtn[aria-expanded="true"] {
-  background: #3398DB;
+  background: var(--primary-accent-hover);
 }
 
 .expandIcon {
@@ -152,19 +305,247 @@
   transform: rotate(180deg);
 }
 
-/* ===== Tablet (≤1024px) ===== */
+/* ─── Expanded detail section ─── */
+.detailSection {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  padding: 20px 20px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.teamHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.teamLabel {
+  font-weight: bold;
+}
+
+.teamLabelBlue {
+  color: var(--info-sky);
+}
+
+.teamLabelRed {
+  color: var(--error-crimson);
+}
+
+.tableContainer {
+  display: flex;
+  gap: 24px;
+}
+
+.teamTable {
+  flex: 1;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.teamTable th {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 180px;
+  padding: 6px 8px;
+  font-size: 0.85rem;
+}
+
+.teamTable td {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 180px;
+  padding: 5px 8px;
+}
+
+.highlightRow {
+  background: #e3f2fd33;
+}
+
+.summNameCell {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  max-width: none;
+  word-break: break-all;
+}
+
+.itemGrid {
+  display: flex;
+  gap: 3px;
+  flex-wrap: nowrap;
+}
+
+.itemIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.itemEmpty {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px dashed var(--muted-text);
+  opacity: 0.3;
+}
+
+/* ─── Gold bar ─── */
+.goldDiffText {
+  margin: 16px 20px 0;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.goldDiffBlue {
+  color: var(--info-sky);
+}
+
+.goldDiffRed {
+  color: var(--error-crimson);
+}
+
+.goldBarRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 20px 20px;
+}
+
+.goldBarLabel {
+  font-weight: bold;
+  min-width: 55px;
+}
+
+.goldBarLabelRight {
+  font-weight: bold;
+  min-width: 55px;
+  text-align: right;
+}
+
+.goldBarTrack {
+  flex: 1;
+  height: 22px;
+  position: relative;
+  background: var(--muted-text);
+  border-radius: 12px;
+  overflow: hidden;
+  min-width: 100px;
+  max-width: 400px;
+}
+
+.goldBarBlue {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--info-sky);
+}
+
+.goldBarRed {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--error-crimson);
+}
+
+/* ─── Timeline ─── */
+.timelineContainer {
+  margin: 18px 0 8px;
+}
+
+/* ─── Status messages ─── */
+.msgError {
+  color: var(--error-crimson);
+  text-align: center;
+}
+
+.msgWarning {
+  color: var(--warning-amber);
+  margin-bottom: 8px;
+}
+
+.msgEmpty {
+  color: var(--muted-text);
+  text-align: center;
+}
+
+/* ─── Animations ─── */
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.matchCardOuter {
+  animation: cardEntrance 0.3s ease both;
+}
+
+.detailSection {
+  animation: slideDown 0.2s ease;
+}
+
+/* ─── Load More button ─── */
+.loadMoreBtn {
+  padding: 10px 28px;
+  border-radius: 8px;
+  border: 1px solid var(--primary-accent);
+  background: transparent;
+  color: var(--primary-accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.loadMoreBtn:hover:not(:disabled) {
+  background: var(--primary-accent);
+  color: #fff;
+}
+
+.loadMoreBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Timeline event icons ─── */
+.timelineIcon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  background: var(--surface-gunmetal);
+  border-radius: 50%;
+  border: 2px solid var(--subtle-contrast);
+}
+
+.timelineTime {
+  font-size: 0.85em;
+  color: var(--muted-text);
+}
+
+/* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .matchesList {
     max-width: 96vw;
     gap: 14px;
   }
 
-  .matchCard {
+  .matchCardOuter {
     max-width: 95vw;
   }
 }
 
-/* ===== Mobile (≤768px) ===== */
 @media (max-width: 768px) {
   .matchesList {
     max-width: 100vw;
@@ -172,11 +553,8 @@
     padding: 0 8px;
   }
 
-  .matchCard {
+  .matchCardOuter {
     max-width: 100%;
-    padding: 10px 12px;
-    font-size: 0.95rem;
-    border-radius: 8px;
   }
 
   .championIcon {
@@ -198,12 +576,12 @@
     font-size: 0.85rem;
   }
 
-  .matchDetails table {
-    min-width: 260px;
+  .teamTable {
+    min-width: 280px;
   }
 
-  .matchDetails td,
-  .matchDetails th {
+  .teamTable td,
+  .teamTable th {
     max-width: 80px;
     font-size: 0.85rem;
   }
@@ -211,20 +589,55 @@
   .expandBtn {
     width: 36px;
     font-size: 1.3rem;
+    min-height: 72px;
     border-radius: 0 8px 8px 0;
+  }
+
+  .detailSection {
+    padding: 14px 14px 12px;
+  }
+
+  .goldBarRow {
+    margin: 10px 14px 16px;
+  }
+
+  .goldDiffText {
+    margin: 14px 14px 0;
+  }
+
+  .tableContainer {
+    gap: 12px;
+  }
+
+  .teamTable th {
+    padding: 4px 6px;
+    max-width: 120px;
+  }
+
+  .teamTable td {
+    padding: 4px 6px;
+    max-width: 120px;
+  }
+
+  .summaryBar {
+    padding: 10px 12px;
+    gap: 4px;
+  }
+
+  .filterPill {
+    font-size: 0.78rem;
+    padding: 3px 10px;
   }
 }
 
-/* ===== Small phones (≤480px) ===== */
 @media (max-width: 480px) {
   .matchesList {
     padding: 0 4px;
     gap: 8px;
   }
 
-  .matchCard {
-    padding: 8px 10px;
-    font-size: 0.9rem;
+  .matchCardOuter {
+    padding: 0;
   }
 
   .championIcon {
@@ -237,18 +650,38 @@
     font-size: 1rem;
   }
 
-  .matchDetails table {
+  .teamTable {
     min-width: 240px;
   }
 
-  .matchDetails td,
-  .matchDetails th {
+  .teamTable td,
+  .teamTable th {
     font-size: 0.8rem;
     max-width: 60px;
+  }
+
+  .champIconSummary {
+    width: 40px;
+    height: 40px;
   }
 
   .expandBtn {
     width: 32px;
     font-size: 1.1rem;
+    min-height: 64px;
+  }
+
+  .detailSection {
+    padding: 10px 8px 8px;
+  }
+
+  .teamTable th {
+    padding: 3px 4px;
+    max-width: 80px;
+  }
+
+  .teamTable td {
+    padding: 3px 4px;
+    max-width: 80px;
   }
 }

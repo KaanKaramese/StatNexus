@@ -45,6 +45,8 @@ const translations = {
     tower: 'Tower',
     dragon: 'Dragon',
     elderDragon: 'Elder Dragon',
+    recentlySearched: 'Recently Searched',
+    clear: 'Clear',
     // Add more keys as needed
   },
   tr: {
@@ -90,6 +92,8 @@ const translations = {
     tower: 'Kule',
     dragon: 'Ejder',
     elderDragon: 'Kadim Ejder',
+    recentlySearched: 'Son Arananlar',
+    clear: 'Temizle',
     // Add more keys as needed
   }
 };

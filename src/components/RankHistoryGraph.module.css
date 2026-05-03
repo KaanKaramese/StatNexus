@@ -1,0 +1,181 @@
+.wrapper {
+  width: 100%;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--subtle-contrast);
+}
+
+.title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.chartRow {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.rankInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 110px;
+  padding-top: 4px;
+}
+
+.rankInfoHeader {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+}
+
+.rankInfoHeader:first-child {
+  margin-top: 0;
+}
+
+.rankInfoTier {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--heading);
+  line-height: 1.3;
+}
+
+.rankInfoRecord {
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rankInfoWins {
+  color: var(--win-color);
+}
+
+.rankInfoLosses {
+  color: var(--loss-color);
+}
+
+.rankInfoSep {
+  color: var(--muted-text);
+  font-weight: 400;
+}
+
+.rankInfoRate {
+  color: var(--muted-text);
+  font-weight: 500;
+}
+
+.rankInfoLadder {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.rankInfoPercent {
+  font-size: 0.78rem;
+  color: var(--muted-text);
+}
+
+.chartContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .chartRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rankInfo {
+    min-width: 0;
+    padding-top: 0;
+  }
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-text);
+  font-size: 0.85rem;
+  padding: 8px 0;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--subtle-contrast);
+  border-top-color: var(--primary-accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty {
+  color: var(--muted-text);
+  font-size: 0.82rem;
+  padding: 8px 0;
+  text-align: center;
+}
+
+.error {
+  color: var(--error-crimson);
+  font-size: 0.85rem;
+}
+
+.tooltip {
+  background: var(--surface-gunmetal);
+  border: 1px solid var(--subtle-contrast);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.tooltipDate {
+  font-size: 0.78rem;
+  color: var(--muted-text);
+  margin-bottom: 4px;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.tooltipTier {
+  font-weight: 700;
+}
+
+.tooltipLp {
+  color: var(--muted-text);
+}
+
+.tooltipWins {
+  color: var(--win-color);
+  font-weight: 600;
+}
+
+.tooltipLosses {
+  color: var(--loss-color);
+  font-weight: 600;
+}
+
+.tooltipSep {
+  color: var(--muted-text);
+}

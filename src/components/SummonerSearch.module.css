@@ -24,18 +24,18 @@
   background: var(--surface-gunmetal);
   color: var(--body);
   outline: none;
-  box-shadow: 0 2px 8px rgba(79, 195, 247, 0.05);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.05);
   transition: box-shadow 0.2s;
   min-width: 0;
 }
 
 .textbox:focus,
 .textbox2:focus {
-  box-shadow: 0 0 0 2px #4fc3f7;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.4);
 }
 
 .button {
-  background: var(--primary-accent);
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
   color: var(--heading);
   font-weight: 600;
   border: none;
@@ -43,14 +43,18 @@
   padding: 12px clamp(20px, 3vw, 28px);
   font-size: var(--text-body);
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(79, 195, 247, 0.15);
-  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+  transition: box-shadow 0.2s, transform 0.15s;
   white-space: nowrap;
 }
 
 .button:hover {
-  background: var(--primary-accent-hover);
-  box-shadow: 0 4px 16px rgba(79, 195, 247, 0.25);
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.35);
+  filter: brightness(1.1);
+}
+
+.button:active {
+  transform: scale(0.97);
 }
 
 /* Autocomplete */
@@ -71,6 +75,12 @@
   left: 0;
   top: calc(100% + 4px);
   z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .autocompleteItem {
@@ -171,6 +181,53 @@
 .highlight {
   background: rgba(255, 255, 255, 0.18);
   border-radius: 4px;
+}
+
+.recentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: default;
+}
+
+.clearButton {
+  background: none;
+  border: none;
+  color: var(--primary-accent);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.clearButton:hover {
+  background: rgba(124, 58, 237, 0.15);
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: var(--muted-text);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0 4px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.removeButton:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* ===== Tablet (≤1024px) ===== */

@@ -12,7 +12,7 @@
 
 .authModal {
   background: var(--surface-gunmetal);
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: 0 4px 32px rgba(79, 195, 247, 0.18);
   padding: clamp(24px, 3vw, 32px) clamp(20px, 3vw, 28px);
   width: min(380px, 90vw);
@@ -27,10 +27,13 @@
 }
 
 .authModalTitle {
-  color: var(--light-accent-orchid);
   margin-bottom: 8px;
   font-size: var(--text-h3);
-  font-weight: 600;
+  font-weight: 700;
+  background: linear-gradient(135deg, #a78bfa, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .authModalForm {

@@ -2,8 +2,8 @@
 :root {
   /* Primary Colors */
   --bg-charcoal: #1b1e23;
-  --primary-accent: #6C3DB9;
-  --primary-accent-hover: #814ef1;
+  --primary-accent: #7c3aed;
+  --primary-accent-hover: #8b5cf6;
 
   /* Supporting Colors */
   --surface-gunmetal: #262a31;
@@ -17,8 +17,18 @@
   --error-crimson: #f03e3e;
   --info-sky: #4ea3f1;
 
+  /* Match Colors */
+  --win-color: #22c55e;
+  --loss-color: #e57373;
+  --score-death: #e84057;
+
+  /* Elevation Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.22);
+
   /* Typography */
-  --heading: #fff;
+  --heading: #ececec;
   --body: #d3d6db;
   --muted-text: #8a8f99;
   --link-hover: #d1a3ff;
@@ -56,7 +66,7 @@ body {
   min-height: 100dvh;
   background: var(--bg-charcoal);
   color: var(--body);
-  font-family: 'Segoe UI', 'Inter', 'Arial', sans-serif;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
   font-size: var(--text-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -85,8 +95,8 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--primary-accent);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.4);
 }
 
 /* ===== Scrollbar ===== */
