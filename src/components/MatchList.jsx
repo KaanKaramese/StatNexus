@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './MatchList.module.css';
 import { apiFetch } from '../api';
 import { useLanguage } from '../context/LanguageContext';
@@ -543,9 +544,9 @@ export default function MatchList({ puuID }) {
                   )}
                 </div>
                 <button
-                  className={styles.expandBtn}
+                  className={`${styles.expandBtn} ${summary.win ? styles.expandBtnWin : styles.expandBtnLoss}`}
                   aria-expanded={expanded[idx] ? 'true' : 'false'}
-                  onClick={handleExpand}
+                  onClick={(e) => { e.stopPropagation(); handleExpand(); }}
                   title={expanded[idx] ? t('hide') : t('details')}
                 >
                   <span className={styles.expandIcon}>
@@ -569,7 +570,14 @@ export default function MatchList({ puuID }) {
                       <tbody>
                         {summary.team1.map(p => (
                           <tr key={p.puuid} className={p.puuid === puuID ? styles.highlightRow : ''}>
-                            <td className={styles.summNameCell}>{p.summonerName || p.riotIdGameName || '-'}</td>
+                            <td className={styles.summNameCell}>
+                              <Link
+                                to={`/summoner/by-puuid/${p.puuid}`}
+                                className={styles.summonerLink}
+                              >
+                                {p.summonerName || p.riotIdGameName || '-'}
+                              </Link>
+                            </td>
                             <td>
                               <img src={championIcon(p.championName) || ''} alt={p.championName} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
                             </td>
@@ -585,7 +593,14 @@ export default function MatchList({ puuID }) {
                       <tbody>
                         {summary.team2.map(p => (
                           <tr key={p.puuid} className={p.puuid === puuID ? styles.highlightRow : ''}>
-                            <td className={styles.summNameCell}>{p.summonerName || p.riotIdGameName || '-'}</td>
+                            <td className={styles.summNameCell}>
+                              <Link
+                                to={`/summoner/by-puuid/${p.puuid}`}
+                                className={styles.summonerLink}
+                              >
+                                {p.summonerName || p.riotIdGameName || '-'}
+                              </Link>
+                            </td>
                             <td>
                               <img src={championIcon(p.championName) || ''} alt={p.championName} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
                             </td>

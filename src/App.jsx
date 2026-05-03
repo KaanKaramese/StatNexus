@@ -48,10 +48,6 @@ async function saveRankSnapshot(profileData) {
 function AppContent() {
   const { user, isLoading, logout, handleCallback } = useAuth();
   const [authModal, setAuthModal] = useState({ show: false, error: '' });
-  const [profile, setProfile] = useState(null);
-  const [puuID, setPuuID] = useState(null);
-  const [summonerError, setSummonerError] = useState('');
-  const [summonerLoading, setSummonerLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,84 +80,20 @@ function AppContent() {
 
   const handleLogout = () => {
     logout();
-    setProfile(null);
-    setPuuID(null);
-    setSummonerError('');
     navigate('/');
   };
 
-  const handleSummonerSearch = async (username, tagLine, setError) => {
-    setSummonerError('');
-    setProfile(null);
-    setPuuID(null);
-    setSummonerLoading(true);
-    try {
-      const response = await apiFetch(`/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(username)}/${encodeURIComponent(tagLine)}`);
-      if (!response.ok) {
-        setSummonerLoading(false);
-        if (response.status === 404) setError('Summoner not found. Please check the name and tag.');
-        else if (response.status === 403) setError('API key invalid or expired. Please update your API key.');
-        else setError('Failed to fetch summoner info. Try again later.');
-        return;
-      }
-      const res = await response.json();
-      if (!res.puuid) {
-        setSummonerLoading(false);
-        setError('Invalid summoner data received.');
-        return;
-      }
-      setPuuID(res.puuid);
-      let region = 'tr1';
-      try {
-        const shardRes = await apiFetch(`/riot/account/v1/active-shards/by-game/lol/by-puuid/${res.puuid}`);
-        if (shardRes.ok) {
-          const shardData = await shardRes.json();
-          if (shardData.activeShard) region = shardData.activeShard;
-        }
-      } catch {
-        // shard fetch is optional, proceed with default region
-      }
-      const summonerRes = await apiFetch(`/riot/lol/summoner/v4/summoners/by-puuid/${res.puuid}?region=${region}`);
-      if (!summonerRes.ok) {
-        setSummonerLoading(false);
-        setError('Failed to fetch summoner profile info.');
-        return;
-      }
-      const summonerData = await summonerRes.json();
-      const rankRes = await apiFetch(`/riot/lol/league/v4/entries/by-puuid/${res.puuid}?region=${region}`);
-      let rankText = '-';
-      let entry = null;
-      if (rankRes.ok) {
-        const rankData = await rankRes.json();
-        if (Array.isArray(rankData) && rankData.length > 0) {
-          const solo = rankData.find(q => q.queueType === 'RANKED_SOLO_5x5');
-          entry = solo || rankData[0];
-          rankText = `${entry.tier} ${entry.rank} (${entry.leaguePoints} LP)`;
-        }
-      }
-      const profileData = {
-        name: res.gameName && res.tagLine ? `${res.gameName}#${res.tagLine}` : (summonerData.name || '-'),
-        level: summonerData.summonerLevel,
-        icon: summonerData.profileIconId != null ? `${summonerData.profileIconId}` : '',
-        rank: rankText,
-        wins: entry?.wins || 0,
-        losses: entry?.losses || 0,
-        tier: entry?.tier || null,
-        rankDivision: entry?.rank || null,
-        lp: entry?.leaguePoints || null,
-        puuid: res.puuid,
-        encryptedSummonerId: summonerData.id,
-      };
-      setProfile(profileData);
-      setSummonerLoading(false);
-      addRecentSearch({ gameName: res.gameName, tagLine: res.tagLine, profileIconId: summonerData.profileIconId, summonerLevel: summonerData.summonerLevel, region });
-      void trackSummonerSearch(res.gameName, res.tagLine, summonerData.profileIconId, summonerData.summonerLevel, region);
-      void saveRankSnapshot(profileData);
-      navigate('/profile');
-    } catch {
-      setSummonerLoading(false);
-      setError('Network error. Please check your connection.');
-    }
+  const handleSummonerSearch = (username, tagLine) => {
+    navigate(
+      `/summoner/${encodeURIComponent(username)}/${encodeURIComponent(tagLine)}`,
+      { replace: true }
+    );
+  };
+
+  const handleSearchSuccess = ({ gameName, tagLine, profileIconId, summonerLevel, region, profileData }) => {
+    addRecentSearch({ gameName, tagLine, profileIconId, summonerLevel, region });
+    trackSummonerSearch(gameName, tagLine, profileIconId, summonerLevel, region);
+    saveRankSnapshot(profileData);
   };
 
   if (isLoading) {
@@ -190,7 +122,12 @@ function AppContent() {
       />
       <Routes>
         <Route path="/" element={<LandingPage onSearch={handleSummonerSearch} />} />
-        <Route path="/profile" element={<SummonerProfilePage profile={profile} puuID={puuID} error={summonerError} isLoading={summonerLoading} />} />
+        <Route path="/summoner/by-puuid/:puuid" element={
+          <SummonerProfilePage onSearchSuccess={handleSearchSuccess} />
+        } />
+        <Route path="/summoner/:gameName/:tagLine" element={
+          <SummonerProfilePage onSearchSuccess={handleSearchSuccess} />
+        } />
         <Route path="/guides" element={<GuidePage />} />
       </Routes>
     </LanguageProvider>

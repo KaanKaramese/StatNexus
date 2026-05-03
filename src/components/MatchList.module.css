@@ -136,7 +136,7 @@
 /* ─── Summary row (always visible) ─── */
 .summaryRow {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   cursor: pointer;
   padding-left: 10px;
 }
@@ -276,9 +276,7 @@
 /* ─── Expand button ─── */
 .expandBtn {
   width: 44px;
-  height: 100%;
-  min-height: 80px;
-  background: var(--primary-accent);
+  align-self: stretch;
   border: none;
   border-radius: 0 10px 10px 0;
   display: flex;
@@ -292,8 +290,16 @@
   padding: 0;
 }
 
+.expandBtnWin {
+  background: #5383E8;
+}
+
+.expandBtnLoss {
+  background: #E84057;
+}
+
 .expandBtn[aria-expanded="true"] {
-  background: var(--primary-accent-hover);
+  filter: brightness(1.15);
 }
 
 .expandIcon {
@@ -534,6 +540,19 @@
   color: var(--muted-text);
 }
 
+/* ─── Clickable summoner link ─── */
+.summonerLink {
+  color: var(--info-sky);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s, text-decoration 0.15s;
+}
+
+.summonerLink:hover {
+  text-decoration: underline;
+  color: var(--primary-accent);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .matchesList {
@@ -589,7 +608,6 @@
   .expandBtn {
     width: 36px;
     font-size: 1.3rem;
-    min-height: 72px;
     border-radius: 0 8px 8px 0;
   }
 
@@ -668,7 +686,6 @@
   .expandBtn {
     width: 32px;
     font-size: 1.1rem;
-    min-height: 64px;
   }
 
   .detailSection {

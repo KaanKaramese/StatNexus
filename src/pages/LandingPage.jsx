@@ -7,13 +7,9 @@ export default function LandingPage({ onSearch }) {
   const [error, setError] = useState('');
   const { t } = useLanguage();
 
-  const handleSearch = async (username, tagLine) => {
+  const handleSearch = (username, tagLine) => {
     setError('');
-    try {
-      await onSearch(username, tagLine, setError);
-    } catch {
-      setError('An error occurred.');
-    }
+    onSearch(username, tagLine);
   };
 
   return (

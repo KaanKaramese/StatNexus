@@ -52,9 +52,7 @@ export default function Navbar({ user, onLogout, onShowLogin }) {
   // Update underline position
   const updateUnderline = (target) => {
     if (target) {
-      const rect = target.getBoundingClientRect();
-      const parentRect = target.parentElement.parentElement.getBoundingClientRect();
-      setUnderline({ left: rect.left - parentRect.left, width: rect.width });
+      setUnderline({ left: target.offsetLeft, width: target.offsetWidth });
     }
   };
 
